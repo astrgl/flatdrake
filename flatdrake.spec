@@ -47,36 +47,3 @@ install -Dm 644 flatdrake.svg  -t %{buildroot}/%{_datadir}/icons/hicolor/32x32/a
 %{_datadir}/flatdrake/license
 %{_datadir}/flatdrake/flatdrake-*
 %{_datadir}/flatdrake/*.png
-
-%changelog
-*Tue Apr 25 2023 Astragalo <mauro.carbini@gmail.com> 1.0.0-mib1
--Modificato controllo uscita ora con btnclose non chiede conferma
--Correzioni tooltip
-
-*Mon Apr 24 2023 Astragalo <mauro.carbini@gmail.com> 1.0.0-mib2
--Modificata la gestione dell'immagine
-
-*Sun Apr 23 2023 Astragalo <mauro.carbini@gmail.com> 1.0.0-mib1
--Prima release pubblica
--Aggiunte tooltip
--Aggiunta creazione di file temporaneo per ricerca su dnfdrake
--Aggiunta funzione che deseleziona all da update se si seleziona un'app specifica da aggiornare
-
-*Thu Apr 06 2023 Astragalo <mauro.carbini@gmail.com> 0.99.6-mib1
--Aggiunta funzione di ricerca su flathub
--Aggiunta spunta sul pulsante update di default aggiorna tutto
--Aggiunta funzione di conferma uscita
--Correzioni varie
-
-*Sun Apr 02 2023 Astragalo <mauro.carbini@gmail.com> 0.99.5-mib1
--Aggiunta verifica app presente in repo rpm
--Correzioni varie
-
-*Thu Mar 23 2023 Astragalo <mauro.carbini@gmail.com> 0.99.1-mib1
--Aggiunto caricamento flathub all'avvio
--Correzioni varie
-
-*Tue Mar 21 2023 Astragalo <mauro.carbini@gmail.com> 0.99.0-mib1
--Initial Build for Rosa and OpenMandriva Rome (MIB)
-
-
