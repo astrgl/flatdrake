@@ -1,5 +1,5 @@
 Name: flatdrake
-Version: 1.0.0
+Version: 1.1.0
 Release: 1
 Packager: Astragalo
 License: GPL
