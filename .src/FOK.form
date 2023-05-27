@@ -1,0 +1,16 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,44,14.2857)
+  Icon = Picture["flatdrake.svg"]
+  { !BTNOK Button
+    MoveScaled(14,8,16,4)
+    #Public = True
+    Picture = Picture["icon:/16/apply"]
+  }
+  { Label1 Label
+    MoveScaled(4,2,36,3)
+    Alignment = Align.Center
+    Text = ("Operation Complete!")
+  }
+}

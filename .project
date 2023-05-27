@@ -1,0 +1,15 @@
+# Gambas Project File 3.0
+Title=FlatDrake
+Startup=FMAIN
+Icon=flatdrake.svg
+Version=1.1.1
+Component=gb.image
+Component=gb.gui
+Component=gb.form
+Description="FlatDrake è un frontend a FlatPak.\n\nTutto è iniziato partendo dalla base di DnfDrake che parte dal programma di esempio Console per Gambas di Princeton."
+Authors="Autore: Mauro Carbini aka Astragalo\nMail: mauro.carbini@gmail.com"
+TabSize=2
+Translate=1
+Language=en_US
+Vendor=Astragalo
+Packager=1

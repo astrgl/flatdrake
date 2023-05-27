@@ -1,0 +1,21 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,91,6)
+  Icon = Picture["flatdrake.svg"]
+  { TXTSTATO Label
+    MoveScaled(1,2,28,3)
+  }
+  { ProgressBar1 ProgressBar
+    MoveScaled(29.4286,2.2857,52,2)
+  }
+  { BTNSKIP Button
+    MoveScaled(82,2,7,3)
+    Text = ("Skip")
+  }
+  { Timer1 #Timer
+    #MoveScaled(70,-1)
+    Enabled = True
+    Delay = 3000
+  }
+}

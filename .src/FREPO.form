@@ -1,0 +1,38 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,56,27)
+  Icon = Picture["flatdrake.svg"]
+  { BTNCLOSE Button
+    MoveScaled(20,21,16,4)
+    Picture = Picture["icon:/16/quit"]
+  }
+  { TXTNOME TextBox
+    MoveScaled(2,4,52,4)
+  }
+  { BTNADD Button
+    MoveScaled(2,15,5,4)
+    Picture = Picture["icon:/16/added"]
+  }
+  { BTNREMOVE Button
+    MoveScaled(49,15,5,4)
+    Picture = Picture["icon:/16/remove"]
+  }
+  { Label1 Label
+    MoveScaled(2,1,52,3)
+    Alignment = Align.Center
+    Border = Border.Plain
+    BorderRadius = 10
+    Text = ("Nome Repositiry")
+  }
+  { Label2 Label
+    MoveScaled(2,8,52,3)
+    Alignment = Align.Center
+    Border = Border.Plain
+    BorderRadius = 10
+    Text = ("URL Repositiry")
+  }
+  { TXTURL TextBox
+    MoveScaled(2,11,52,4)
+  }
+}

@@ -1,0 +1,189 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,195.1429,100)
+  Icon = Picture["flatdrake.svg"]
+  Resizable = False
+  { Label1 Label
+    MoveScaled(117,1,14.2857,4)
+    Border = Border.Plain
+    BorderRadius = 10
+  }
+  { CORNICE Label
+    MoveScaled(1,20,191,70)
+    Border = Border.Plain
+    BorderRadius = 8
+  }
+  { BTNCLOSE Button
+    MoveScaled(178,1,14.2857,4)
+    Picture = Picture["icon:/16/quit"]
+  }
+  { !BTNCOMMAND Button
+    MoveScaled(1,94.5714,15.7143,4)
+    #Public = True
+    Text = ("Debug") & "..."
+    Picture = Picture["icon:/16/system"]
+  }
+  { HBox1 HBox
+    MoveScaled(17,94.5714,100,4)
+    Visible = False
+    { TXTCOMMAND TextBox
+      MoveScaled(0,0,23,4)
+      Visible = False
+      Font = Font["Courier 10 Pitch"]
+      Expand = True
+    }
+    { BTNCTRLC Button
+      MoveScaled(82,0,9,4)
+      Visible = False
+      Text = ("CTRL-C")
+    }
+    { BTNCTRLZ Button
+      MoveScaled(91,0,9,4)
+      Visible = False
+      Text = ("CTRL-Z")
+    }
+  }
+  { !TXTCONSOLE TextArea
+    MoveScaled(1.8571,21,189.2857,68)
+    #Public = True
+    Visible = False
+    Font = Font["Monospace"]
+  }
+  { PictureBox1 PictureBox
+    MoveScaled(1.8571,21,189.2857,68)
+    Background = Color.Background
+    Alignment = Align.Center
+  }
+  { BTNCLEAR Button
+    MoveScaled(176,94.5714,15.7143,4)
+    Picture = Picture["icon:/16/clear"]
+  }
+  { TXTPKG TextBox
+    MoveScaled(22,1,60,4)
+  }
+  { TXTCLEARTXTPKG Button
+    MoveScaled(81.7143,1,4.4286,4)
+    Picture = Picture["icon:/16/clear"]
+  }
+  { BTNINSTALL Button
+    MoveScaled(87,1,14.2857,4)
+    Picture = Picture["icon:/16/added"]
+  }
+  { BTNREMOVE Button
+    MoveScaled(102,1,14.2857,4)
+    Picture = Picture["icon:/16/delete"]
+  }
+  { BTNPKGUPDATE Button
+    MoveScaled(117,1,7.1429,4)
+    Picture = Picture["icon:/16/update"]
+    Border = False
+  }
+  { !BTNSTOP Button
+    MoveScaled(132,1,14.2857,4)
+    #Public = True
+    Picture = Picture["icon:/16/stop"]
+  }
+  { BTNSELECTALL Button
+    MoveScaled(47,90,5,4)
+    Visible = False
+    Picture = Picture["icon:/16/add"]
+  }
+  { BTNUNSELECTALL Button
+    MoveScaled(52,90,5,4)
+    Visible = False
+    Picture = Picture["icon:/16/remove"]
+  }
+  { BTNWRITEPKG Button
+    MoveScaled(1,90,5,4)
+    Visible = False
+    Picture = Picture["icon:/16/rename"]
+  }
+  { BTNTABINSTALLED Button
+    MoveScaled(13,90,5,4)
+    Visible = False
+    Picture = Picture["ICONS-EXTRA/installed.png"]
+  }
+  { BTNTABAVAILABLE Button
+    MoveScaled(18,90,5,4)
+    Visible = False
+    Picture = Picture["ICONS-EXTRA/install.png"]
+  }
+  { BTNTABUPDATE Button
+    MoveScaled(23,90,5,4)
+    Visible = False
+    Picture = Picture["ICONS-EXTRA/update.png"]
+  }
+  { LISTPKGINSTALLATI ListView
+    MoveScaled(1.8571,21,189.2857,68)
+    Visible = False
+    Font = Font["Monospace"]
+    ShowCheck = True
+  }
+  { LISTPKGAVAILABLE ListView
+    MoveScaled(1.8571,21,189.2857,68)
+    Visible = False
+    Font = Font["Monospace"]
+    ShowCheck = True
+  }
+  { LISTPKGUPGRADE ListView
+    MoveScaled(2,21,189.2857,68)
+    Visible = False
+    Font = Font["Monospace"]
+    ShowCheck = True
+  }
+  { CMBTIPO ComboBox
+    MoveScaled(1,1,15,4)
+    List = [("All"), ("Installed"), ("Available"), ("Update"), ("Repository")]
+  }
+  { BTNCERCA Button
+    MoveScaled(16,1,6,4)
+    Picture = Picture["icon:/16/find"]
+  }
+  { !TIMERUPLISTE #Timer
+    #MoveScaled(83,5)
+    #Public = True
+    Delay = 1500
+  }
+  { BTNUPDATELISTE Button
+    MoveScaled(178,6,14.2857,4)
+    Picture = Picture["icon:/16/refresh"]
+  }
+  { LBTIPO Label
+    MoveScaled(89,16,14.2857,3.4286)
+    Visible = False
+    Font = Font["Monospace,Bold"]
+    Alignment = Align.Center
+    Border = Border.Plain
+    BorderRadius = 10
+  }
+  { BTNABOUT Button
+    MoveScaled(178,11,14.2857,4)
+    Picture = Picture["icon:/16/info"]
+  }
+  { !Spinner1 Spinner
+    MoveScaled(9,47,22,12)
+    #Public = True
+    Type = Spinner.Dot
+  }
+  { !BTNREPO Button
+    MoveScaled(147,1,14.2857,4)
+    #Public = True
+    Visible = False
+    Picture = Picture["icon:/16/server"]
+  }
+  { BTNINFOBROWSER Button
+    MoveScaled(6,90,5,4)
+    Visible = False
+    Picture = Picture["icon:/16/internet"]
+  }
+  { CHKALLUPDATE CheckBox
+    MoveScaled(124,1,7,4)
+    Text = ("All")
+    Value = CheckBox.True
+  }
+  { BTNRESOLUTION Button
+    MoveScaled(1,16,5,4)
+    Picture = Picture["icon:/16/fullscreen"]
+  }
+}

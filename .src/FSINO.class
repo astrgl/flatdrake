@@ -1,0 +1,53 @@
+' Gambas class file
+
+Public sStr As String
+Public Sub Form_Open()
+'FMAIN.Enabled = False
+FMAIN.FMAINLOCK
+' sStr = FMAIN.$sText
+' 'PULIZIA CARATTERI ERRATI IN CONSOLE******************      
+'     sStr = Replace(sStr, "", "")
+'     sStr = Replace(sStr, "[1m", "")
+'     sStr = Replace(sStr, "[22m", "")
+' '*****************************************************
+'  TextArea1.Text = sStr
+  Timer1.Enabled = True
+End
+Public Sub form_Close()
+  'FMAIN.Enabled = True
+  FMAIN.FMAINUNLOCK
+End
+Public Sub BTNNO_Click()
+ BTNNO.Enabled = False
+ Print #Fmain.$hProcess, "N" & gb.NewLine; 
+ Wait 0.5
+ Fmain.Btnclear_click
+ Fmain.Mouse = Mouse.Default
+' Fmain.Enabled = True
+ 'Fmain.TMPLISTCLEAN
+ '$SECURE = 1
+ Me.Close  
+  
+End
+
+
+Public Sub BTNSI_Click()
+
+ BTNSI.Enabled = False
+ Print #Fmain.$hProcess, "Y" & gb.NewLine;
+ ' If Fmain.$SECUREMODE = "SECURE" Then
+ '  FRUN.Show 
+ ' Endif
+ ' $SECURE = 1
+ Me.Close  
+
+End
+
+
+
+Public Sub Timer1_Timer()
+  TextArea1.Text = FMAIN.TXTCONSOLE.Text
+  TextArea1.Visible = True
+  Timer1.Enabled = False
+
+End

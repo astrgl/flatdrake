@@ -1,0 +1,32 @@
+' Gambas class file
+
+
+Public Sub MONITORVIEW_MouseDown()
+
+  
+
+End
+
+Public Sub Form_Open()
+'FMAIN.Enabled = False 
+FMAIN.FMAINLOCK
+' If FMAIN.Spinner1.Visible = True Then
+'   FMAIN.Spinner1.Stop 
+'   FMAIN.Spinner1.Visible = False
+' Endif
+TXTSTEP.Text = "Please wait..."
+'FMAIN.Enabled = False
+FMAIN.BTNCOMMAND.Enabled = True
+'FMAIN.Spinner1.Enabled = True
+End
+Public Sub form_Close()
+  'FMAIN.Enabled = True
+  FMAIN.FMAINUNLOCK
+End
+Public Sub BTNSTOP_Click()
+
+  FMAIN.BTNSTOP_Click
+  Wait 0.2
+  Me.Close
+
+End

@@ -1,0 +1,1533 @@
+' Gambas class file
+
+' Gambas class file
+Public $hProcess As Process
+Public $sText As String
+Public $DNFDRAKEASK As String
+Public $CASE As Integer
+Public $NOTPACKAGES As String
+Public $PROGRESS As Integer
+Public $TOT As Integer
+Public $SELEZIONE As Integer
+Public $PKGINREPO As String
+Public $PKGREPO As String[]
+Public $PKGINSTALL As String
+Public $CLOSEPASS As Integer
+Public $RISOLUZIONE As String
+Public $RISOLUZIONEX As Integer
+Public $RISOLUZIONEY As Integer
+Public $DISTRO As String
+'Public $KILL As Integer
+
+Public Sub Form_Open()
+'TOOLTIP E TESTI*******************************************************************************
+ Dim flTTP As File  
+ Dim jTTP As Byte
+ Dim s$TTP As String
+ Dim ss$TTP As New String[]
+'***********************************************************************************************  
+  Dim $repo As String
+  'controllo esistenza delle directory del programma********************************************
+   If Not Exist(User.Home &/ ".config/flatdrake/") Then
+   Mkdir User.Home &/ "/.config/flatdrake/"
+   Endif
+   If Not Exist(User.Home &/ ".config/flatdrake/log") Then
+   Mkdir User.Home &/ "/.config/flatdrake/log"
+   Endif
+ 'INSTALLA FLATHUB SE NON INSTALLATO*************************************************************
+ Shell "flatpak remotes " To $repo
+  If InStr($repo, "flathub") > 0 Then
+ Else 
+   Message.Info("FlatHub is not configured and will be added!", "Ok")
+   Shell "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo" Wait 
+ Endif
+ 'SERVE PER CHIUDERE TUTTE LE FINESTRE DEL PROGRAMMA APERTE ALL'USCITA**************
+    Application.MainWindow = Me
+
+ 'Avvio il processo*****************************************************************
+    $hProcess = Exec ["sh", "--noediting"] For Input Output As "Process"
+    
+ 'VERIFICA CHE FLATDRAKE NON SIA GIA IN ESECUZIONE
+    Dim $LOCK As String
+    Dim $LOCKVAL As Integer
+     Shell "ps aux | grep gbr3 | grep -w flatdrake.gambas | wc -l" Wait To $LOCK 
+     $LOCKVAL = CInteger(Val(Right(Left($LOCK))))
+     If $LOCKVAL > 2 Then
+     Message.Info("Please don't run multiple session of FlatDrake!", "OK")
+       Quit 
+     Endif 
+'IMPOSTA LA LINGUA DI CONSOLE INGLESE*****************************************************************
+        Print #$hProcess, "LANG=en_US.UTF-8" & gb.NewLine;
+        Wait 0.1
+        Print #$hProcess, "LANGUAGE=en_US.UTF-8" & gb.NewLine;
+        Wait 0.1
+        Print #$hProcess, "LC_COLLATE=C" & gb.NewLine;
+        Wait 0.1
+        Print #$hProcess, "LC_CTYPE=en_US.UTF-8" & gb.NewLine;
+
+ 'controllo esistenza delle directory del programma***************************************************
+    ' If Not Exist(User.Home &/ ".config/dnfdrake/") Then
+    '   Mkdir User.Home &/ "/.config/dnfdrake/"
+    ' Endif
+    ' If Not Exist(User.Home &/ ".config/dnfdrake/log") Then
+    '   Mkdir User.Home &/ "/.config/dnfdrake/log"
+    ' Endif
+ 'MEMORIZZA IL BROWSER DI DEFAULT******************************************************************
+ ' Shell "xdg-settings get default-web-browser" To $BROWSER
+ ' If InStr($BROWSER, "chrome") Then
+ '   $BROWSER = "google-chrome"
+ ' Endif
+ ' If InStr($BROWSER, "falkon") Then
+ '   $BROWSER = "falkon"
+ ' Endif
+ ' If InStr($BROWSER, "firefox") Then
+ '   $BROWSER = "firefox"
+ ' Endif
+ ' If InStr($BROWSER, "chromium") Then
+ '   $BROWSER = "chromium-browser"
+ ' Endif
+ ' TXTPKG.Text = $BROWSER
+ 
+ 'Carica il pront**********************************************************************************
+    $DNFDRAKEASK = "[Flatdrake Lavora Per Te]"
+   
+    Print #$hProcess, "PS1=" & Chr$(34) & $DNFDRAKEASK & Chr$(34) & gb.NewLine; 
+    Wait 0.1
+    TXTCONSOLE.Text = ""
+'TOOLTIP E TESTI*****************************************************************
+  flTTP = Open "/usr/share/flatdrake/flatdrake-TTP-en_GB" For Read   ' ...oppure "Input"
+  'flTTP = Open "/usr/share/dnfdrake/flatdrake-TTP-en_GB" & $LANG For Read   ' ...oppure "Input"
+  'flTTP = Open User.Home & "/src/rpm/SOURCES/flatdrake/flatdrake-TTP-en_GB" For Read   ' ...oppure "Input"
+  While Not Eof(flTTP)
+  Input #flTTP, s$TTP
+  ss$TTP.Add(s$TTP)
+  Wend
+  Close #flTTP
+  For jTTP = 0 To ss$TTP.Max
+
+      txtpkg.Tooltip = Replace(ss$TTP[0], "_", " ")
+      BTNINSTALL.Tooltip = Replace(ss$TTP[1], "_", " ")     
+      BTNREMOVE.Tooltip = Replace(ss$TTP[2], "_", " ")
+      BTNPKGUPDATE.Tooltip = Replace(ss$TTP[3], "_", " ")
+      BTNCLOSE.Tooltip = Replace(ss$TTP[4], "_", " ")      
+      btncerca.Tooltip = Replace(ss$TTP[5], "_", " ")
+      CHKALLUPDATE.Tooltip = Replace(ss$TTP[6], "_", " ")
+      BTNINFOBROWSER.Tooltip = Replace(ss$TTP[7], "_", " ")
+      BTNSTOP.Tooltip = Replace(ss$TTP[8], "_", " ")      
+      TXTCLEARTXTPKG.Tooltip = Replace(ss$TTP[9], "_", " ")      
+      BTNCLEAR.Tooltip = Replace(ss$TTP[10], "_", " ")      
+      BTNWRITEPKG.Tooltip = Replace(ss$TTP[11], "_", " ")
+      BTNCOMMAND.Tooltip = Replace(ss$TTP[12], "_", " ")      
+      TXTCOMMAND.Tooltip = Replace(ss$TTP[13], "_", " ")
+      LISTPKGINSTALLATI.Tooltip = Replace(ss$TTP[14], "_", " ")
+      LISTPKGAVAILABLE.Tooltip = Replace(ss$TTP[14], "_", " ")
+      LISTPKGUPGRADE.Tooltip = Replace(ss$TTP[14], "_", " ")
+      BTNABOUT.Tooltip = Replace(ss$TTP[15], "_", " ")
+      BTNUPDATELISTE.Tooltip = Replace(ss$TTP[16], "_", " ") 
+      BTNTABINSTALLED.Tooltip = Replace(ss$TTP[17], "_", " ") 
+      BTNTABAVAILABLE.Tooltip = Replace(ss$TTP[18], "_", " ") 
+      BTNTABUPDATE.Tooltip = Replace(ss$TTP[19], "_", " ") 
+      CMBTIPO.Tooltip = Replace(ss$TTP[20], "_", " ") 
+      
+      
+      ' Btnpathfile.Tooltip = Replace(ss$TTP[1], "_", " ")
+      ' Cmbtipo.Tooltip = Replace(ss$TTP[5], "_", " ")
+      ' BtnCFG.Tooltip = Replace(ss$TTP[7], "_", " ")
+      ' Btndownload.Tooltip = Replace(ss$TTP[8], "_", " ")
+      ' Cmbtipoinfo.Tooltip = Replace(ss$TTP[10], "_", " ")
+      ' btninfo.Tooltip = Replace(ss$TTP[11], "_", " ")
+      ' Btncrono.Tooltip = Replace(ss$TTP[12], "_", " ")
+      ' Btnclear.Tooltip = Replace(ss$TTP[14], "_", " ")
+      ' btnpkg.Tooltip = Replace(ss$TTP[15], "_", " ") 
+      ' $HBOX1TOOLTIP = Replace(ss$TTP[17], "_", " ")
+      ' Listpkg.Tooltip = Replace(ss$TTP[18], "_", " ")
+      ' txtConsole.Tooltip = Replace(ss$TTP[19], "_", " ")
+      ' txtlang.Tooltip = Replace(ss$TTP[20], "_", " ")
+      ' Btncleartxtpkg.Tooltip = Replace(ss$TTP[24], "_", " ")
+      ' $DIALOGDIRTITLE = Replace(ss$TTP[25], "_", " ")
+      ' $DIALOGFILETITLE = Replace(ss$TTP[26], "_", " ")
+      ' $SELECTPKG = Replace(ss$TTP[27], "_", " ")  
+      ' BTNPICKER.Tooltip = Replace(ss$TTP[28], "_", " ")
+      ' $CERCAFILE = Replace(ss$TTP[29], "_", " ")
+      ' BTNDOWNDGRADE.Tooltip = Replace(ss$TTP[30], "_", " ") 
+      ' BTNCUSTOM.Tooltip = Replace(ss$TTP[31], "_", " ") 
+      ' BTNPKGUPDATE.Tooltip = Replace(ss$TTP[32], "_", " ") 
+      ' BTNEXTRA.Tooltip = Replace(ss$TTP[37], "_", " ") 
+      ' PCTCONNECT.Tooltip = Replace(ss$TTP[38], "_", " ")
+      ' PCTDISCONNECT.Tooltip = Replace(ss$TTP[39], "_", " ")
+      ' BTNSELECTALL.Tooltip = Replace(ss$TTP[40], "_", " ")
+      ' BTNUNSELECTALL.Tooltip = Replace(ss$TTP[41], "_", " ")
+      ' BTNTABINSTALLED.Tooltip = Replace(ss$TTP[42], "_", " ") 
+      ' BTNTABAVIABLE.Tooltip = Replace(ss$TTP[43], "_", " ") 
+      ' BTNTABUPDATE.Tooltip = Replace(ss$TTP[44], "_", " ") 
+      ' $NOTPACKAGES = Replace(ss$TTP[48], "_", " ") 
+      ' $DNFDRAKEASK = Replace(ss$TTP[49], "_", " ")
+      ' BTNDNFCLEAN.Tooltip = Replace(ss$TTP[51], "_", " ") 
+      ' Btnpathpkglist.Tooltip = Replace(ss$TTP[52], "_", " ") 
+      ' ListpkgINSTALLATI.Tooltip = Replace(ss$TTP[53], "_", " ")
+      ' ListpkgAVAILABLE.Tooltip = Replace(ss$TTP[53], "_", " ")  
+      ' ListpkgUPGRADE.Tooltip = Replace(ss$TTP[53], "_", " ") 
+      ' BTNADDPKGLIST.Tooltip = Replace(ss$TTP[54], "_", " ") 
+      ' BTNPKGLISTVIEW.Tooltip = Replace(ss$TTP[58], "_", " ") 
+      ' BTNPKGLISTCLEAN.Tooltip = Replace(ss$TTP[59], "_", " ") 
+      ' BTNEXCLUDE.Tooltip = Replace(ss$TTP[60], "_", " ") 
+      ' BTNAUTOREMOVE.Tooltip = Replace(ss$TTP[76], "_", " ") 
+      ' $AUTOREMOVETEXT = Replace(ss$TTP[77], "_", " ") 
+      ' $CMBTOOLTIP = Replace(ss$TTP[5], "_", " ")
+      ' BTNFULLSCREEN.Tooltip = Replace(ss$TTP[78], "_", " ") 
+      ' BTNRESIZE.Tooltip = Replace(ss$TTP[79], "_", " ") 
+      ' $SUSPENDONTTP = Replace(ss$TTP[81], "_", " ") 
+      ' $SUSPENDOFFTTP = Replace(ss$TTP[82], "_", " ") 
+      ' BTNMYREPO.Tooltip = Replace(ss$TTP[83], "_", " ")
+     Next
+   flTTP.Close
+ 'CARICA L'IMMAGINE DELLA DISTRO*****************************
+   Shell "lsb_release -d" To $DISTRO
+  If InStr($DISTRO, "OpenMandriva", 0, gb.IgnoreCase) Then
+      PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
+     Else 
+       If InStr($DISTRO, "ROSA", 0, gb.IgnoreCase) Then
+       PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")
+       Spinner1.X = 390
+       Spinner1.Y = 300
+       Spinner1.Height = 170
+       Spinner1.Width = 170
+     Else 
+       PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/LINUX.png")
+       Spinner1.X = 512
+       Spinner1.Y = 490
+       Spinner1.Height = 90
+       Spinner1.Width = 90
+    Endif
+       ' PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/LINUX.png")
+       ' Spinner1.X = 512
+       ' Spinner1.Y = 490
+       ' Spinner1.Height = 90
+       ' Spinner1.Width = 90
+  Endif
+  'IMPOSTA LA DIMENSIONE DELLA FINESTRA IN BASE ALLA RISOLUZIONE DELLO SCHERMO
+  Shell "xrandr --current |grep '*'" To $RISOLUZIONE
+  $RISOLUZIONEX = Val(Str(Right(Left($risoluzione, 7), 4)))
+  $RISOLUZIONEY = Val(Str(Right(Left($risoluzione, 12), 4)))
+  RESOLUTION
+
+    
+  '************************************************************  
+
+
+  'Azzera le variabili***********************************************************
+    TXTPKG.SetFocus
+    Cmbtipo.Index = 0
+    $CASE = 1 'SOLO PER TESTDA ELIMINARE
+    $NOTPACKAGES = "No FlatPak Found!"'SOLO PER TESTDA ELIMINARE
+   '$KILL = 0
+    TIMERUPLISTE.Enabled = True
+    $CLOSEPASS = 0
+  '******************************************************************************
+  
+End
+
+
+' Public Sub Process_Kill()
+'   Try Me.Close
+' End
+Public Sub Form_Close()
+ If $CLOSEPASS = 0 Then
+      Dim iAnswer As Integer = Message.Question("Do you really want to go out?", "Yes", "No")
+  If (iAnswer = 1) Then
+    $hProcess.Kill
+   ' Me.Close
+    Else
+      BTNCLOSE.Enabled = True
+      Stop Event
+  Endif
+ Else 
+  $hProcess.Kill  
+ Endif
+  
+  
+  ' Dim $PID As String
+  
+  ' If Exist(User.Home & "/.config/dnfdrake/repolist.tmp") Then
+  '    Shell "rm -f " & User.Home & "/.config/dnfdrake/repolist.tmp "  
+  ' Endif
+  
+  
+  
+  
+  ' PARTE CHE SERVE A KILLARE IL PROCESSO DI DNFDRAKE SE È STATO LANCIATO DNFDRAKETRAY ********** 
+
+  ' If $KILL = 1 Then
+  '    Shell "ps aux | grep gbr3 | grep -w dnfdrake.gambas" Wait To $PID
+  '    $PID = Right(Left($PID, 16), 8)
+  '    Shell "kill " & $PID
+  ' Endif
+
+End
+
+Public Sub BTNCLOSE_Click()
+
+    Btnclose.Enabled = False
+    $CLOSEPASS = 1
+    If Exist(User.Home &/ ".config/flatdrake/flatsearchtmp") Then 
+       Shell "rm -f " & User.Home &/ ".config/flatdrake/flatsearchtmp" Wait  
+    Endif
+    Me.Close
+End
+
+Public Sub BTNCOMMAND_Click()
+  TABHIDE
+  
+  If TXTCONSOLE.Visible = False Then
+    Btnclear_Click 
+  Endif
+  TXTCOMMAND.SetFocus
+  If txtCommand.Visible = False Then
+    Btncommand.Text = Btncommand.Text & " ^"
+    HBox1.Visible = True
+    'HBox1.Tooltip = $HBOX1TOOLTIP
+    txtCommand.Visible = True
+    PictureBox1.Visible = False
+    btnCtrlC.Visible = True
+    btnCtrlZ.Visible = True
+    TXTCONSOLE.Visible = True
+    If Spinner1.Visible = True Then
+      Spinner1.Visible = False
+    Endif
+      ' If Btnexp2.Text = "EXP2" Then
+      '   Btnexp2_Click 
+      ' Endif
+  Else
+      Btncommand.Text = Left(Btncommand.Text, -2)
+      HBox1.Visible = False
+      HBox1.Tooltip = ""
+      txtCommand.Visible = False
+      PictureBox1.Visible = True
+      btnCtrlC.Visible = False
+      btnCtrlZ.Visible = False
+      TXTCONSOLE.Visible = False
+     ' Btnexp2_Click 
+      
+  Endif
+
+End
+
+
+Public Sub BTNCTRLZ_Click()
+   Print #$hProcess, Chr$(26);
+End
+Public Sub BTNCTRLC_Click()
+   Print #$hProcess, Chr$(3);
+End
+Public Sub TXTCOMMAND_Activate()
+  ' 'GESTIONE PER TEST LINGUE***************************************
+  ' 'RICARICA L'INTEFACCIA CON LA LINGUA IN TEST********************
+  ' If txtCommand.Visible = True And Left(txtCommand.Text, 10) = "reloadlang" Then
+  '    If $templang = "" Then
+  '       Message.info("Caricare prima la lingua con magiclang xx_XX !", "OK")
+  '       txtCommand.Text = ""   
+  '       Wait 0.5
+  '       txtConsole.Text = ""   
+  '    Else 
+  '       $LANG = $templang
+  '       txtCommand.Text = ""   
+  '       Wait 0.5
+  '       txtConsole.Text = "" 
+  '       Form_Open
+
+' 'CORREZIONE BUG DOPPIO AVVIO ************************************      
+'         $KILL = 1
+'          If BTNFULLSCREEN.Visible = True Then
+'            BTNFULLSCREEN_Click
+'             Wait 0.5
+'             txtConsole.Text = "" 
+'          Else    
+'            BTNRESIZE_Click 
+'            Wait 0.5
+'            txtConsole.Text = "" 
+'          Endif
+' '****************************************************************        
+'      Endif
+'   '**************************************************************
+'   Else 
+'   'SCEGLIE LA LINGUA DA TESTARE**********************************  
+'         If txtCommand.Visible = True And Left(txtCommand.Text, 9) = "magiclang" Then
+'            $templang = Right(txtCommand.Text, 5)
+'            If $templang = "clang" Then
+'               Message.Info("Digitare la lingua in formato xx_XX dopo magiclang!", "Ok")
+'            Else  
+'               Message.info("La lingua di sistema è stata modificata in " & $templang & " ;-)" & " Riavviare per ripristinare la lingua di sistema!", "OK")
+'               Print #$hProcess, "LANG=" & $templang & ".UTF-8" & gb.NewLine;
+'               Wait 0.1
+'               Print #$hProcess, "LANGUAGE=" & $templang & ".UTF-8" & gb.NewLine;
+'               Wait 0.1
+'               Print #$hProcess, "LC_COLLATE=C" & gb.NewLine;
+'               Wait 0.1
+'               Print #$hProcess, "LC_CTYPE=" & $templang & ".UTF-8" & gb.NewLine;
+'               txtCommand.Text = ""   
+'               Wait 0.1
+'               txtConsole.Text = ""   
+'               txtlang.Text = "**"
+'               
+'            Endif  
+'       '*****************************************************************
+'         Else  
+      ' ESEGUE I COMANDI NORMALI**************************************** 
+            Dim sTXTCOMMAND As String
+            sTXTCOMMAND = txtCommand.Text & gb.NewLine
+            txtCommand.Clear
+            sTXTCOMMAND = Conv$(sTXTCOMMAND, Desktop.Charset, System.Charset)
+            Print #$hProcess, sTXTCOMMAND;
+        ' Endif
+  ' Endif 
+End
+
+Public Sub Process_Read()
+  Dim sStr As String
+  Dim I As Integer
+  Dim $PROGRASSPARZIALE As Integer
+  Dim $STEP As Integer
+  $STEP = 0
+  
+  'Read #$hProcess, sStr, -2560 '-2560 sembra risolvere i problemi in listpkg e i blocchi durante i comandi
+'RADDOPPIATO IL VALORE PER ACCETTARE PIÙ PACCHETTI DURANTE LE INSTALLAZIONI********************************
+  Read #$hProcess, sStr, -2560 '-2560 sembra risolvere i problemi in listpkg e i blocchi durante i comandi
+  $sText = $sText & sStr
+'FSINO********************************************************************************** 
+  If InStr($sText, "[Y/n]") Or InStr($sText, "[y/n]") Then                        'PROCEDERE AD INSTALLARE
+    '       If $SECUREMODE = "SECURE" Then                  'FSINOSECURE.Show
+    '       Else 
+             Wait 1
+             FSINO.Show    
+           Endif
+           
+  If InStr($sText, "?25h[6n") > 0 Then
+    FOK.Show
+  Endif
+  
+  If InStr($sText, "already installed") Then
+    FOK.Show
+  Endif
+
+           
+'FRUN E STEP*************************************************************
+  If InStr($sText, "Installing") > 0                    'PROCEDERE AD INSTALLARE
+    '       If $SECUREMODE = "SECURE" Then
+    '         FSINOSECURE.Show
+    '       Else 
+          
+             If FRUN.Visible = False
+             Try $TOT = Right(Left(sStr, 15), 1)
+               If Error Then 
+                 $TOT = 1
+               Endif
+             FRUN.Show    
+             Endif 
+             Try $PROGRESS = Right(Left(sStr, 13), 1)
+                If Error Then 
+                  $PROGRESS = 1
+                Endif
+             FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of " & $TOT
+             
+           Endif
+  If InStr($sText, "Updating") > 0 Then 
+     If FRUN.Visible = False
+             Try $TOT = Right(Left(sStr, 13), 1)
+               If Error Then 
+                 $TOT = 1
+               Endif
+             FRUN.Show    
+             Endif 
+             Try $PROGRESS = Right(Left(sStr, 11), 1)
+                If Error Then 
+                  $PROGRESS = 1
+                Endif
+             FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of " & $TOT
+  Endif
+           
+'PROGRESSBAR2 PARZIALE***************************************** 
+  If InStr($sText, "%") > 0 And If FRUN.Visible = True Then  
+    I = (InStr(sStr, "%")) - 1
+    $PROGRASSPARZIALE = Right(Left(sStr, I), 3)
+    FRUN.ProgressBar2.Value = $PROGRASSPARZIALE / 100
+  Endif
+  
+'****************************************************************
+If InStr($sText, "Which do you want to use") > 0 Then
+    FSELEZIONE.Show
+  Endif 
+ 
+  'If $PRINTLOG = 0 Then  
+    '   If InStr($sText, $PASSWORD) > 0 Then                           'RICHIESTA INSERIMENTO PASSWORD
+    '     FPW.Show
+    '   Endif
+    '   If InStr($sText, $RQSTPASSWORD) > 0 Then                      'operazione annullata se è richiesta password
+    '    FPW.Close
+    '    Print #$hProcess, Chr$(3);
+    '   Endif 
+    '   If InStr($sText, $PROCEDERE) > 0 Then                        'PROCEDERE AD INSTALLARE
+    '       If $SECUREMODE = "SECURE" Then
+    '         FSINOSECURE.Show
+    '       Else 
+    '         FSINO.Show    
+    '       Endif
+    '   Endif
+    ' '****************************************************************************************
+    '   If InStr($sText, "Your choice:") > 0 Then                   'DOMANDA DI SELEZIONE 
+    '     FSELECTION.Show
+    '    Endif
+    ' '****************************************************************************************
+    '   If InStr($sText, $FATTO) > 0 Then                         ' OPERAZIONE TERMINATA (FATTO)"
+    '     If $MEMOCOMMAND = "RECOVERSUSPEND" Then
+    '       $CLEARLOGSUSPEND = 0
+    '     Endif
+    '     FOK.Show
+    '   Endif
+    '   If InStr($sText, $NONRIUSCITO) > 0 Then                   ' OPERAZIONE TERMINATA (NON RIUSCITO)"
+    '     FOK.Show
+    '   Endif
+' '*********************************************************************************************
+'       If InStr($sText, "sudo: 3") > 0 Then                   ' TEST PER PASSWORD ERRATA"
+'         Message.Info("Operazione non eseguita password errata", "Ok")
+'       Endif
+' '*********************************************************************************************
+
+  ' Endif 
+  ' ' If InStr($sText, "~]$") Or If InStr($sText, "]#") > 0 Then '*****VECCHIO CONTROLLO USATO PRIMA DEL CAMBIO DEL PRONT*************** 
+  '   If InStr($sText, $DNFDRAKEASK) > 0 Then
+  '     $STATUS = 0
+  '     $PRINTLOG = 0
+' 'SERVE A GESTIRE LA RICERCA CON OPZIONE TUTTI**********************************
+'         If $ListpkgWR = 3 And $ListpkgCK = 3 Then
+'           $ListpkgWR = 0
+'           $ListpkgCK = 0
+'         Endif
+'         If $ListpkgWR = 2 And $ListpkgCK = 2 Then
+'           btncerca_Click
+'         Endif
+'         If $ListpkgWR = 1 And $ListpkgCK = 1 Then
+'           btncerca_Click
+'         Endif
+' 'COMANDI POSTUMI (MEMOCOMMAND)*************************************************
+'   'OM-PICKER********************************************       
+'        If $MEMOCOMMAND = "dnf repolist" Then
+'           Print #$hProcess, $MEMOCOMMAND & gb.NewLine; 
+'           $MEMOCOMMAND = ""
+'           Me.Mouse = Mouse.default
+'           Fmain.Enabled = True
+'           Wait 2
+'           Fmain.TimerUPLISTE.Enabled = True
+'        Endif
+'   'EXCLUDE********************************************              
+'         If $MEMOCOMMAND = "EXCLUDETEST" Then
+'           EXCLUDETEST 
+'           $MEMOCOMMAND = ""
+'        Endif
+'        If $MEMOCOMMAND = "LISTUPDTEXCL" Then
+'         ' Wait 0.05  ' SE SI PREME ANNULLA SULLA FINESTRA DELLA PASSWORD IL PROGRAMMA VA IN STACKOVERFLOW
+'          Btnclear_Click
+'          TimerUPLISTE.Enabled = True
+'          $MEMOCOMMAND = ""
+'        Endif
+'   'MEMOCOMMAND MYREPO********************************************
+'        If $MEMOCOMMAND = "TMPREPOCLEAR" Then
+'           Print #$hProcess, "rm -f  " & User.Home & "/.config/dnfdrake/*.repo " & gb.NewLine;
+'           $MEMOCOMMAND = ""
+'           Wait 0.05
+'           FMYREPO.CERCAREPO
+'           Btnclear_Click
+'           Wait 0.05
+'           
+'        Endif 
+'   'MEMOCOMMAND AUTOREMOVE********************************************
+'        If $MEMOCOMMAND = "AUTOREMOVE" Then
+'           CERCAAUTOREMOVE
+'           $MEMOCOMMAND = ""          
+'        Endif
+'   'MEMOCOMMAND PULISCI SUSPEND ********************************************
+'        If $MEMOCOMMAND = "CLEARSUSPEND" Then
+'           $MEMOCOMMAND = ""
+'           VERIFYSUSPEND
+'           Btnclear_Click
+'        Endif     
+'  'MEMOCOMMAND MOUSEDEFAULT*************************************************
+'        If $MEMOCOMMAND = "MOUSEDEFAULT" Then
+'          Me.Mouse = Mouse.Default
+'          $MEMOCOMMAND = ""
+'        Endif
+' '**************************************************************************
+'        If $MEMOCOMMAND = "DISTROSYNCWAIT" Then
+'          $MEMOCOMMAND = ""
+'          VERIFYSUSPEND
+'          Wait 0.2
+'          Btnclear_Click
+'          txtConsole.Text = ""
+'          If $ABORT = 0 Then
+'             If BTNDISTUPDATE.Visible = True
+'               BTNDISTUPDATE_Click 
+'             Else 
+'               btnupdate_Click
+'             Endif 
+'          Else 
+'             $ABORT = 0
+'             Fmain.Enabled = True
+'          Endif
+'        Endif
+' '**************************************************************************
+'        If $MEMOCOMMAND = "RECOVERSUSPEND" Then
+'             If $COUNTRECOVERSUSPEND = 1 Then
+'                 $MEMOCOMMAND = ""
+'                 FRESETSUSPEND.Show
+'                 $COUNTRECOVERSUSPEND = 0
+'             Else 
+'                 $COUNTRECOVERSUSPEND = $COUNTRECOVERSUSPEND + 1 
+'                 $CLEARLOGSUSPEND = 0
+'             Endif
+'        Endif
+' 
+' '**************************************************************************
+'        If $MEMOEXEC = "txtpkgclear" And $ListpkgWR = 0 Then
+'           Btncleartxtpkg_Click
+'           $MEMOEXEC = ""
+'        Endif
+' '**************************************************************************
+'        If $ListpkgWR = 0 And $CHKERROR > 0 Then
+'           Try Message.Info("N°" & $CHKERROR & " ERRORS HAVE BEEN DETECTED, PLEASE IMPROVE THE SEARCH CRITERIA", "OK")
+'           $CHKERROR = 0
+'        Endif
+'     Else
+'        $STATUS = 1
+'     Endif
+' '**************************************************************************
+  UpdateConsole
+ 
+' 'controllo esecuzione comandi per sequenza comandi di ricerca************
+'   If $ListpkgWR = 1 And $STATUS = 1 Then
+'     $ListpkgCK = 1 
+'   Endif
+'   If $ListpkgWR = 2 And $STATUS = 0 Then
+'     $ListpkgCK = 0
+'   Endif
+'   If $ListpkgWR = 2 And $STATUS = 1 And $ListpkgCK = 0 Then
+'     $ListpkgCK = 2
+'   Endif
+'   If $ListpkgWR = 3 And $STATUS = 0 Then
+'     $ListpkgCK = 0
+'   Endif
+'   If $ListpkgWR = 3 And $STATUS = 1 And $ListpkgCK = 0 Then
+'     $ListpkgCK = 3
+'   Endif
+'***********************************************************************
+If InStr(TXTCONSOLE.Text, "[Flatdrake Lavora Per Te]") Or If InStr(BTNCOMMAND.Text, " ^") Then
+  Spinner1.Visible = False
+  Spinner1.Stop
+  Else 
+    Spinner1.Visible = True
+    Spinner1.Start
+    
+Endif
+End
+Private Sub UpdateConsole()
+
+  Dim iPos As Integer
+  Dim sStr As String
+ ' Dim s As String
+ ' Dim sok As String
+  
+  ' Dim smid As String[]   'da elimiare se dopo 10 versioni se non presenta errori di ricerca 1.9.6
+ 'Dim p As Integer
+
+  While Len($sText)
+    iPos = InStr($sText, gb.NewLine)
+    If iPos = 0 Then iPos = Len($sText)
+     sStr = Normalize(Left$($sText, iPos))
+'  ' pulizia stringa per lista pacchetti in listpkg********************************************************
+'      ' questo codice serve a levare gli spazi prima e dopo il nome del pacchetto  " RTrim$(LTrim$(txtpkg.Text)))  "
+'      If InStr($sText, RTrim$(LTrim$(txtpkg.Text))) > 0 Then       
+'      If InStr($sText, ".x86_64") Or InStr($sText, ".noarch") Or InStr(s, ".znver1") Or InStr(s, ".aarch64") Or InStr($sText, ".i686") Then
+'        Try s = Scan($sText, "*[    ]*")[0]
+'         If Error Then
+'            $CHKERROR = $CHKERROR + 1
+'         Endif
+'        ' smid = Split(s, " ")   'da elimiare se dopo 10 versioni se non presenta errori di ricerca
+'        ' For Each s In smid    'da elimiare se dopo 10 versioni se non presenta errori di ricerca
+'         If InStr(s, RTrim$(LTrim$(txtpkg.Text))) > 0 Then
+'          s = LTrim(s)
+'          If Comp(s, sok) = 0 Then
+'         Else
+' 'MODIFICAPER LA VISUALIZZAZIONE DEI PACCHETTI SELEZIONABILI
+'         If $ListpkgWR = 3 Then
+'           p = 1 + ListpkgINSTALLATI.Count
+'           ListpkgINSTALLATI.Add(p, s)
+'         Endif
+'         If $ListpkgWR = 2 Then
+'           p = 1 + ListpkgAVAILABLE.Count
+'           ListpkgAVAILABLE.Add(p, s)
+'         Endif
+'         If $ListpkgWR = 1 Then
+'           p = 1 + ListpkgUPGRADE.Count       
+'           ListpkgUPGRADE.Add(p, s)
+'         Endif
+'         If $ListpkgWR = 0 
+'            p = 1 + Listpkg.Count
+'            Listpkg.Add(p, s) 
+'         Endif
+'        ' Listpkg.Add(p, s)
+' '************************************************************
+'         sok = s
+'         Endif
+'         Endif
+'       ' Next   'da elimiare se dopo 10 versioni se non presenta errori di ricerca
+' 
+'      Endif
+'      Endif
+'******************************************************************************************
+    $sText = Mid$($sText, iPos + 1)
+    txtConsole.Pos = txtConsole.Length
+    
+'PULIZIA CARATTERI ERRATI IN CONSOLE******************      
+    sStr = Replace(sStr, "", "")
+    sStr = Replace(sStr, "[1m", "")
+    sStr = Replace(sStr, "[22m", "")
+    sStr = Replace(sStr, "[6n", "")
+    sStr = Replace(sStr, "[2m", "")
+    sStr = Replace(sStr, "[?25l", "")
+    sStr = Replace(sStr, "[?25h", "")
+'*****************************************************
+    txtConsole.Insert(sStr)
+'*****SERVE PER NON MOSTRARE IL ^C DI ANNULLA*****************
+   ' If InStr(txtConsole.text, "^C") > 0 Then
+    '   Btnclear_Click
+    ' Endif
+'*****************************************AZIONI EXTRA ************************************************
+'     
+' 'INVIA L'ULTIMA RIGA ALLA FINESTRA FRUN E CONTROLLA GLI ERRORI************************    
+'     If FPROGRESSWAIT.Visible = True Then
+'        FPROGRESSWAIT.MONITORVIEW.Text = sStr
+'     Endif
+' 'verifica se l'operazione ha errori*************************** CORREGGERE QUESTO!!!!  
+'     If sStr = $DNFDRAKEASK And FRUN.ProgressBar1.Pulse = True Then 
+'       FRUN.ProgressBar1.Pulse = False    
+'       FRUN.ProgressBar1.Value = 1
+'       FRUN.BTNSTOP.Text = Fmain.Btnclose.Text
+'       FRUN.MONITORVIEW.Visible = False
+'       FRUN.Text = "DnfDrake,  " & "Error!" 
+'       FERROR.Show
+'       Wait 0.2
+'       FERROR.TextArea1.Text = txtConsole.Text
+'     Endif
+' 
+' 
+' 'CHIUSURA FPROGRESSWAIT **************************************************************
+'       If sStr = $DNFDRAKEASK And FPROGRESSWAIT.Visible = True Then
+'          FPROGRESSWAIT.Close
+'       Endif
+' '*************************************************************************************
+
+  Wend
+End
+Public Sub FMAINLOCK()
+  
+  CMBTIPO.Enabled = False
+  BTNCERCA.Enabled = False
+  TXTPKG.Enabled = False
+  TXTCLEARTXTPKG.Enabled = False
+  BTNINSTALL.Enabled = False  
+  BTNREMOVE.Enabled = False
+  BTNPKGUPDATE.Enabled = False
+  BTNSTOP.Enabled = False
+  BTNREPO.Enabled = False
+  BTNCLOSE.Enabled = False
+  BTNUPDATELISTE.Enabled = False
+  BTNABOUT.Enabled = False
+  BTNWRITEPKG.Enabled = False
+  BTNTABINSTALLED.Enabled = False
+  BTNTABAVAILABLE.Enabled = False
+  BTNTABUPDATE.Enabled = False
+  BTNCLEAR.Enabled = False
+  
+  
+End
+Public Sub FMAINUNLOCK()
+  
+  CMBTIPO.Enabled = True
+  BTNCERCA.Enabled = True
+  TXTPKG.Enabled = True
+  TXTCLEARTXTPKG.Enabled = True
+  BTNINSTALL.Enabled = True  
+  BTNREMOVE.Enabled = True
+  BTNPKGUPDATE.Enabled = True
+  BTNSTOP.Enabled = True
+  BTNREPO.Enabled = False
+  BTNCLOSE.Enabled = True
+  BTNUPDATELISTE.Enabled = True
+  BTNABOUT.Enabled = True
+  BTNWRITEPKG.Enabled = True
+  BTNTABINSTALLED.Enabled = True
+  BTNTABAVAILABLE.Enabled = True
+  BTNTABUPDATE.Enabled = True
+  BTNCLEAR.Enabled = True
+  
+  
+End
+
+
+Private Sub TABHIDE()
+    BTNTABINSTALLED.Visible = False
+    BTNTABAVAILABLE.Visible = False
+    BTNTABUPDATE.Visible = False
+    BTNSELECTALL.Visible = False
+    BTNUNSELECTALL.Visible = False
+    BTNWRITEPKG.Visible = False
+    BTNINFOBROWSER.Visible = False
+    ListpkgINSTALLATI.Visible = False
+    ListpkgAVAILABLE.Visible = False
+    ListpkgUPGRADE.Visible = False
+    LBTIPO.Visible = False
+    ' If TXTCOMMAND.Visible = True Then
+    '    CORNICE.Visible = False      
+    ' Else 
+    '    CORNICE.Visible = True
+    ' Endif
+
+    
+End
+
+Private Sub CERCAUPDATE()
+     
+     Dim s As String
+   ' Dim sp As String
+     Dim t As Stream
+     Dim p As Integer
+   '  Dim N As Integer
+     Me.Mouse = Mouse.Wait  
+     ListpkgUPGRADE.Mode = 1
+     ListpkgUPGRADE.Enabled = True
+     BTNTABUPDATE.SetFocus
+     BTNTABUPDATE_Click
+     t = Open User.Home &/ ".config/flatdrake/updates.txt"
+     For Each s In t.Lines
+        If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "        ") And If RTrim$(LTrim$(txtpkg.Text)) = "" Then
+            'sp = Left(s, 13)
+            p = p + ListpkgUPGRADE.Count
+            ListpkgUPGRADE.add(p, Right$(s, -10))
+            'ListpkgUPGRADE.add(p, s & "     Upgrades")
+            ListpkgUPGRADE[p].Foreground = &H0033A0D9
+        Else
+           If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "        ") And If InStr(s, RTrim$(LTrim$(txtpkg.Text)), 0, gb.IgnoreCase) Then
+             
+            p = p + ListpkgUPGRADE.Count
+            ListpkgUPGRADE.add(p, Right$(s, -10))
+            ListpkgUPGRADE[p].Foreground = &H0033A0D9
+           Endif    
+        Endif
+     Next
+     If ListpkgUPGRADE.Count = 0 Then
+       ListpkgUPGRADE.Mode = 0
+       ListpkgUPGRADE.Add(1, $NOTPACKAGES)
+       ListpkgUPGRADE[1].Foreground = &H0033A0D9
+       ListpkgUPGRADE.Enabled = False
+     Endif
+     t.Close
+     Me.Mouse = Mouse.Default
+ 
+ End
+ 
+Private Sub CERCAAVAILABLE()
+  
+     Dim s As String
+     Dim t As Stream
+     Dim p As Integer
+     Me.Mouse = Mouse.Wait  
+     ListpkgAVAILABLE.Mode = 1
+     ListpkgAVAILABLE.Enabled = True
+     BTNTABAVAILABLE.SetFocus
+     BTNTABAVAILABLE_Click
+     t = Open User.Home &/ ".config/flatdrake/noninstallati.txt"
+     For Each s In t.Lines
+        If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") And If RTrim$(LTrim$(txtpkg.Text)) = "" Then
+            p = p + ListpkgAVAILABLE.Count
+'            ListpkgAVAILABLE.add(p, s & "   Available")
+            ListpkgAVAILABLE.add(p, s)
+            ListpkgAVAILABLE[p].Foreground = &H00F47E59
+        Else
+                 If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") And If InStr(s, RTrim$(LTrim$(txtpkg.Text)), 0, gb.IgnoreCase)
+                    p = p + ListpkgAVAILABLE.Count
+                    ListpkgAVAILABLE.add(p, s)
+                    ListpkgAVAILABLE[p].Foreground = &H00F47E59
+                 Endif
+        Endif
+     Next
+      If ListpkgAVAILABLE.Count = 0 Then
+       ListpkgAVAILABLE.Mode = 0
+       ListpkgAVAILABLE.Add(1, $NOTPACKAGES)
+       ListpkgAVAILABLE[1].Foreground = &H00F47E59
+       ListpkgAVAILABLE.Enabled = False
+     Endif
+     t.Close
+     Me.Mouse = Mouse.Default
+
+End
+
+Private Sub CERCAINSTALLED()
+
+     Dim s As String
+     Dim t As Stream
+     Dim p As Integer
+     Me.Mouse = Mouse.Wait  
+     ListpkgINSTALLATI.Mode = 1
+     ListpkgINSTALLATI.Enabled = True
+     BTNTABINSTALLED.SetFocus
+     BTNTABINSTALLED_Click
+     t = Open User.Home &/ ".config/flatdrake/installati.txt"
+     For Each s In t.Lines 
+     If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "system") And If RTrim$(LTrim$(txtpkg.Text)) = "" Then
+          p = p + ListpkgINSTALLATI.Count
+         ' ListpkgINSTALLATI.add(p, s & "     Installed")
+          ListpkgINSTALLATI.add(p, s)
+          ListpkgINSTALLATI[p].Foreground = &H0038D079
+     Else
+          If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "system") And If InStr(s, RTrim$(LTrim$(txtpkg.Text)), 0, gb.IgnoreCase) Then
+             p = p + ListpkgINSTALLATI.Count
+             ListpkgINSTALLATI.add(p, s)
+             ListpkgINSTALLATI[p].Foreground = &H0038D079
+          Endif                     
+    
+     Endif
+     Next
+      If ListpkgINSTALLATI.Count = 0 Then
+       ListpkgINSTALLATI.Mode = 0
+       ListpkgINSTALLATI.Add(1, $NOTPACKAGES)
+       ListpkgINSTALLATI[1].Foreground = &H0038D079
+       ListpkgINSTALLATI.Enabled = False
+     Endif
+     t.Close
+     Me.Mouse = Mouse.Default
+End
+Private Sub CERCAINREPO()
+     Dim s As String
+     Dim t As Stream
+     Dim p As Integer
+     Me.Mouse = Mouse.Wait  
+     ' ListpkgINSTALLATI.Mode = 1
+     ' ListpkgINSTALLATI.Enabled = True
+     ' BTNTABINSTALLED.SetFocus
+     ' BTNTABINSTALLED_Click
+     t = Open User.Home &/ ".config/flatdrake/repo.txt"
+     For Each s In t.Lines 
+     If InStr(s, $PKGINREPO) Then
+          p = p + 1
+     Endif
+     Next
+     t.Close
+     If p > 0 Then
+     Dim iAnswer As Integer = Message.Question("It seems that something similar is present in the OpenMandriva repos, what do you want to do?", " Install From Repo ", "Continue with Flat")
+     If (iAnswer = 1) Then
+       BTNCTRLC_Click
+       Shell "echo " & $PKGINREPO & "> " & User.Home &/ ".config/flatdrake/flatsearchtmp"
+       Shell "dnfdrake.gambas"
+      Else
+         Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
+        'Stop Event
+      Endif
+       
+       ' FINSTALFORREPO.Show
+        'Message.Info("si", "ok")
+     Else   
+         Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
+           'Message.Info("no", "ok")
+     Endif
+     Me.Mouse = Mouse.Default
+  
+  
+End
+
+Private Sub BTNINSTALVIEW()
+      btninstall.Enabled = False
+      btnremove.Enabled = True
+      BTNPKGUPDATE.Enabled = True
+End
+
+Private Sub BTNAVAILABLEVIEW()
+      btninstall.Enabled = True
+      btnremove.Enabled = False
+      BTNPKGUPDATE.Enabled = False 
+End
+
+Private Sub BTNUPDATEVIEW()
+      btninstall.Enabled = False
+      btnremove.Enabled = False
+      BTNPKGUPDATE.Enabled = True 
+End
+Private Sub BTNALLVIEW()
+
+  btninstall.Enabled = True
+  btnremove.Enabled = True
+  BTNPKGUPDATE.Enabled = True 
+End
+Private Sub RESOLUTION()
+
+If BTNRESOLUTION.Picture = Picture["icon:/16/fullscreen"] Then
+   BTNRESOLUTION.Picture = Picture["icon:/16/resize"] 
+   Fmain.X = 0
+   Fmain.Y = 0
+   Fmain.Height = ($RISOLUZIONEY - 70)
+   Fmain.Width = ($RISOLUZIONEX)
+   Btnclose.X = Btnclose.X + ($RISOLUZIONEX - 1366)
+   BTNABOUT.X = BTNABOUT.X + ($RISOLUZIONEX - 1366)
+   BTNUPDATELISTE.X = BTNUPDATELISTE.X + ($RISOLUZIONEX - 1366)
+   Btncommand.Y = Btncommand.Y + ($RISOLUZIONEY - 768)
+   CORNICE.Width = CORNICE.Width + ($RISOLUZIONEX - 1366)
+   CORNICE.Height = CORNICE.Height + ($RISOLUZIONEY - 768)
+   LBTIPO.X = LBTIPO.X + ($RISOLUZIONEX - 1366) / 2
+   TXTCONSOLE.Width = TXTCONSOLE.Width * ($RISOLUZIONEX / 1366) '+ 9 
+   TXTCONSOLE.Height = TXTCONSOLE.Height + ($RISOLUZIONEY - 768)
+   ListpkgINSTALLATI.Width = ListpkgINSTALLATI.Width + ($RISOLUZIONEX - 1366)
+   ListpkgINSTALLATI.Height = ListpkgINSTALLATI.Height + ($RISOLUZIONEY - 768)
+   ListpkgAVAILABLE.Width = ListpkgAVAILABLE.Width + ($RISOLUZIONEX - 1366)
+   ListpkgAVAILABLE.Height = ListpkgAVAILABLE.Height + ($RISOLUZIONEY - 768)
+   ListpkgUPGRADE.Width = ListpkgUPGRADE.Width + ($RISOLUZIONEX - 1366)
+   ListpkgUPGRADE.Height = ListpkgUPGRADE.Height + ($RISOLUZIONEY - 768)
+   PictureBox1.Width = PictureBox1.Width + ($RISOLUZIONEX - 1366)
+   PictureBox1.Height = PictureBox1.Height + ($RISOLUZIONEY - 768)
+   Spinner1.X = Spinner1.X + ($RISOLUZIONEX - 1366) / 2
+   Spinner1.Y = Spinner1.Y + ($RISOLUZIONEY - 768) / 2
+   HBox1.Y = HBox1.Y + ($RISOLUZIONEY - 768)
+   Btnclear.X = Btnclear.X + ($RISOLUZIONEX - 1366)
+   Btnclear.Y = Btnclear.Y + ($RISOLUZIONEY - 768)
+   BTNWRITEPKG.Y = BTNWRITEPKG.Y + ($RISOLUZIONEY - 768)
+   BTNINFOBROWSER.Y = BTNINFOBROWSER.Y + ($RISOLUZIONEY - 768)
+   BTNTABINSTALLED.Y = BTNTABINSTALLED.Y + ($RISOLUZIONEY - 768)
+   BTNTABAVAILABLE.Y = BTNTABAVAILABLE.Y + ($RISOLUZIONEY - 768)
+   BTNTABUPDATE.Y = BTNTABUPDATE.Y + ($RISOLUZIONEY - 768)
+Else 
+  BTNRESOLUTION.Picture = Picture["icon:/16/fullscreen"]
+  Fmain.X = 0
+  Fmain.Y = 0
+  Fmain.Height = 700
+  Fmain.Width = 1366
+  Btnclose.X = 1246
+  BTNABOUT.X = 1246
+  BTNUPDATELISTE.X = 1246
+  Btncommand.Y = 662
+  LBTIPO.X = 623
+  CORNICE.Width = 1337
+  CORNICE.Height = 490
+  TXTCONSOLE.Width = 1332 - 8
+  TXTCONSOLE.Height = 476
+  ListpkgINSTALLATI.Width = 1332 - 8
+  ListpkgINSTALLATI.Height = 476
+  ListpkgAVAILABLE.Width = 1332 - 8
+  ListpkgAVAILABLE.Height = 476
+  ListpkgUPGRADE.Width = 1332 - 8
+  ListpkgUPGRADE.Height = 476
+  PictureBox1.Width = PictureBox1.Width - ($RISOLUZIONEX - 1366)
+  PictureBox1.Height = PictureBox1.Height - ($RISOLUZIONEY - 768)
+  Spinner1.X = Spinner1.X - ($RISOLUZIONEX - 1366) / 2
+  Spinner1.Y = Spinner1.Y - ($RISOLUZIONEY - 768) / 2
+  HBox1.Y = 662
+  Btnclear.X = 1232
+  Btnclear.Y = 662
+  BTNWRITEPKG.Y = 630
+  BTNINFOBROWSER.Y = 630
+  BTNTABINSTALLED.Y = 630
+  BTNTABAVAILABLE.Y = 630
+  BTNTABUPDATE.Y = 630
+Endif 
+End
+Public Sub ListpkgINSTALLATI_DblClick()
+  Dim s As String
+   txtpkg.Text = ""
+   If ListpkgINSTALLATI.Count > 0 Then
+   ListpkgINSTALLATI.MoveCurrent
+   ListpkgINSTALLATI.Item.Selected = True
+   S = ListpkgINSTALLATI.Item.Text
+   s = Scan(s, "* * *")[0]
+   txtpkg.Text = txtpkg.Text & " " & s
+   ListpkgINSTALLATI.UnselectAll
+   ' ListpkgINSTALLATI.Item.Delete  
+   Endif
+
+End
+
+Public Sub ListpkgAVAILABLE_DblClick()
+  Dim s As String
+   txtpkg.Text = ""
+   If ListpkgAVAILABLE.Count > 0 Then
+   ListpkgAVAILABLE.MoveCurrent
+   ListpkgAVAILABLE.Item.Selected = True
+   S = ListpkgAVAILABLE.Item.Text
+   s = Scan(s, "* * *")[0]
+   txtpkg.Text = txtpkg.Text & " " & s
+   ListpkgAVAILABLE.UnselectAll
+   ' ListpkgAVAILABLE.Item.Selected = False
+   ' ListpkgAVAILABLE.Item.Delete  
+   Endif
+End
+
+Public Sub ListpkgUPGRADE_DblClick()
+
+  Dim s As String
+   txtpkg.Text = ""
+   If ListpkgUPGRADE.Count > 0 Then
+   ListpkgUPGRADE.MoveCurrent
+   ListpkgUPGRADE.Item.Selected = True
+   S = ListpkgUPGRADE.Item.Text
+   s = Scan(s, "* * *")[0]
+   txtpkg.Text = txtpkg.Text & " " & s
+   ListpkgUPGRADE.UnselectAll
+   ' ListpkgUPGRADE.Item.Selected = False
+   ' ListpkgUPGRADE.Item.Delete  
+   Endif
+End
+Public Sub LISTPKGUPGRADE_Click()
+  
+  If CHKALLUPDATE.Value = True Then
+     CHKALLUPDATE.Value = False
+  Endif
+  
+End
+
+
+Public Sub ListpkgINSTALLATI_Menu()
+' 
+'  Dim s As String
+'  Dim n As Integer
+' 
+'    If ListpkgINSTALLATI.Count > 0 Then
+'       ListpkgINSTALLATI.MoveCurrent
+'       Try ListpkgINSTALLATI.Item.Selected = True
+'         If Error Then
+'         Else
+'             s = ListpkgINSTALLATI.Item.Text
+'             n = 0
+'             ' ListpkgINSTALLATI.Item.Selected = False
+'         Endif 
+'    Endif
+'    
+'   ' If $INFOENABLED = 0 Then
+'      If s = ""
+'        Else   
+'         If n < 1 Then
+'           n = n + 1
+'           BTNINFOBROWSER_Click            
+'         Endif
+' 
+'           ' TXTINFOBOX.Visible = True
+'           ' Wait 0.5
+'           ' Shell "dnf info " & s Wait To $INFOTEXT
+'           ' TXTINFOBOX.Text = $INFOTEXT    
+'           ' TXTINFOBOX.SetFocus
+'           ' $INFOENABLED = 1
+'      Endif   
+'   ' Endif
+End
+
+Static Private Function Normalize(sStr As String) As String
+
+  Dim sNorm As String
+  sNorm = sStr
+  If System.Charset = Desktop.Charset Then 
+    Return sNorm
+  Else
+    Return Conv$(sNorm, System.Charset, Desktop.Charset) 
+  Endif
+End
+Public Sub BTNCLEAR_Click()
+    ListpkgINSTALLATI.SelectAll
+    ListpkgINSTALLATI.Clear
+    ListpkgINSTALLATI.UnselectAll
+    
+    ListpkgAVAILABLE.SelectAll
+    ListpkgAVAILABLE.Clear
+    ListpkgAVAILABLE.UnselectAll
+    
+    ListpkgUPGRADE.SelectAll
+    ListpkgUPGRADE.Clear
+    ListpkgUPGRADE.UnselectAll
+
+    txtConsole.text = ""
+    TABHIDE
+'GESTIONE PER POTER INSTALLARE DA TXTPKG SE PRESENTI AGGIONAMENTI
+      ' If $OFFLINE = 1 Then
+      '   If Btncommand.Text = Btncommand.Text Then
+      '         If Btnexp2.Text = "EXP2" 
+      '            Btnexp2_Click
+      '         Endif
+      '      TABHIDE
+      '      Listpkg.Visible = False
+      '   Endif
+      ' Else 
+      '     If $STATUS = 0     
+      '        Listpkg.Visible = False
+      '          If Btnexp1.Text = "UEXP1" Then
+      '            Btnexp1_Click
+      '          Endif
+      '     Endif
+      ' Endif
+     
+      CORNICE.Background = True
+      If PictureBox1.Visible = False And If BTNCOMMAND.Text = "Degub..." Then
+         PictureBox1.Visible = True
+      Endif
+
+      BTNALLVIEW
+      Me.Mouse = Mouse.Default
+      ' $PROGRESSBARFORCESUSPEND = 0
+
+    TXTCONSOLE.Text = ""
+    
+End
+
+
+Public Sub BTNPKGUPDATE_Click()
+   Dim a As String
+   Dim s As String
+   Dim spkg As String 
+   If CHKALLUPDATE.Value = True
+      Print #$hProcess, "flatpak update " & gb.NewLine;
+      TABHIDE
+      Btnclear_Click
+      txtConsole.Visible = True
+   Else 
+    spkg = ""
+    If ListpkgUPGRADE.Visible = True 
+       For Each a In ListpkgUPGRADE.Selection
+          s = ListpkgUPGRADE[a].Text
+          s = Left(s, 75)
+          spkg = spkg & " " & s 
+          ListpkgUPGRADE.Remove(a)
+       Next
+       If spkg = "" Then
+          Message.Info("Select an App!", "OK") '($SELECTPKG, "OK")
+       Else
+          ListpkgUPGRADE.UnSelectAll
+          Me.Mouse = Mouse.Wait 
+          TABHIDE
+          Btnclear_Click
+          txtConsole.Visible = True
+          Print #$hProcess, "flatpak update " & spkg & gb.NewLine; ' & " | tee /dev/null " & User.Home & "/last.log"    
+       Endif
+    Endif
+   Endif  
+End
+Public Sub TXTCLEARTXTPKG_Click()
+  TXTPKG.Text = ""
+End
+
+Public Sub BTNSTOP_Click()
+  Print #$hProcess, Chr$(3);
+  Wait 0.2
+  Print #$hProcess, Chr$(3);
+  Me.Mouse = Mouse.Default
+End
+
+Public Sub BTNTABINSTALLED_Click()
+  ListpkgINSTALLATI.Visible = True
+  ListpkgAVAILABLE.Visible = False
+  ListpkgUPGRADE.Visible = False 
+  CORNICE.Background = &H2A9A4F&
+  LBTIPO.Visible = True
+  LBTIPO.Text = "INSTALLED"
+  LBTIPO.Foreground = &H2A9A4F&
+  LBTIPO.BorderColor = &H2A9A4F&
+  BTNINSTALVIEW
+End
+
+Public Sub BTNTABAVAILABLE_Click()
+  ListpkgINSTALLATI.Visible = False
+  ListpkgAVAILABLE.Visible = True
+  ListpkgUPGRADE.Visible = False
+  CORNICE.Background = &HE0703F&
+  LBTIPO.Visible = True
+  LBTIPO.Text = "AVAILABLE"
+  LBTIPO.Foreground = &HE0703F&
+  LBTIPO.BorderColor = &HE0703F&
+  BTNAVAILABLEVIEW
+End
+Public Sub BTNTABUPDATE_Click()
+  ListpkgINSTALLATI.Visible = False
+  ListpkgAVAILABLE.Visible = False
+  ListpkgUPGRADE.Visible = True
+  CORNICE.Background = &H257ED0&
+  LBTIPO.Visible = True
+  LBTIPO.Text = "UPDATES"
+  LBTIPO.Foreground = &H257ED0&
+  LBTIPO.BorderColor = &H257ED0&
+  BTNUPDATEVIEW
+End
+
+Public Sub CMBTIPO_Click()
+
+  
+
+End
+
+Public Sub BTNCERCA_Click()
+  If TXTCOMMAND.Visible = True Then
+    BTNCOMMAND_Click
+  Endif
+  If CMBTIPO.Index = 0 Then
+     Btnclear_Click
+     BTNTABINSTALLED.Visible = True
+     BTNTABAVAILABLE.Visible = True
+     BTNTABUPDATE.Visible = True
+     BTNINFOBROWSER.Visible = True
+    ' BTNSELECTALL.Visible = True
+    ' BTNUNSELECTALL.Visible = True
+     BTNWRITEPKG.Visible = True
+     Me.Mouse = Mouse.Wait  
+     CERCAUPDATE
+     Me.Mouse = Mouse.Wait  
+     CERCAAVAILABLE
+     Me.Mouse = Mouse.Wait  
+     CERCAINSTALLED
+    ' BTNINSTALVIEW
+     BTNTABINSTALLED.SetFocus
+     BTNTABINSTALLED_Click
+  Endif
+  If CMBTIPO.Index = 1 Then 
+      Btnclear_Click
+     ' BTNSELECTALL.Visible = True
+     ' BTNUNSELECTALL.Visible = True
+      BTNWRITEPKG.Visible = True
+      BTNINFOBROWSER.Visible = True
+      Me.Mouse = Mouse.Wait  
+      CERCAINSTALLED
+    '  BTNINSTALVIEW
+      BTNTABINSTALLED.SetFocus
+      BTNTABINSTALLED_Click
+  Endif
+   If CMBTIPO.Index = 2 Then 
+      Btnclear_Click
+      'BTNSELECTALL.Visible = True
+      'BTNUNSELECTALL.Visible = True
+      BTNWRITEPKG.Visible = True
+      BTNINFOBROWSER.Visible = True
+      Me.Mouse = Mouse.Wait  
+      CERCAAVAILABLE
+    '  BTNINSTALVIEW
+      BTNTABAVAILABLE.SetFocus
+      BTNTABAVAILABLE_Click
+  Endif
+   If CMBTIPO.Index = 3 Then 
+       Btnclear_Click
+     ' BTNSELECTALL.Visible = True
+     ' BTNUNSELECTALL.Visible = True
+      BTNWRITEPKG.Visible = True
+      BTNINFOBROWSER.Visible = True
+      Me.Mouse = Mouse.Wait  
+      CERCAUPDATE
+    '  BTNINSTALVIEW
+      BTNTABUPDATE.SetFocus
+      BTNTABUPDATE_Click
+  Endif
+  If CMBTIPO.Index = 4 Then 
+      Btnclear_Click
+      PictureBox1.Visible = False
+      TXTCONSOLE.Visible = True
+      Print #$hProcess, "flatpak remotes" & gb.NewLine;
+      Cmbtipo.Index = 0
+  Endif
+End
+
+Public Sub txtpkg_Activate()
+ btncerca_Click
+End 
+Public Sub BTNWRITEPKG_Click()
+    Dim a As String
+    Dim s As String
+    If ListpkgINSTALLATI.Visible = True Then
+      For Each a In ListpkgINSTALLATI.Selection
+      s = ListpkgINSTALLATI[a].Text
+      s = Scan(s, "* * *")[0]
+      txtpkg.Text = txtpkg.Text & " " & s
+      ' ListpkgINSTALLATI.Remove(a)
+    Next
+     ListpkgINSTALLATI.UnSelectAll
+    Else
+      If ListpkgAVAILABLE.Visible = True Then
+      For Each a In ListpkgAVAILABLE.Selection
+      s = ListpkgAVAILABLE[a].Text
+      s = Scan(s, "* * *")[0]
+      txtpkg.Text = txtpkg.Text & " " & s
+      'ListpkgAVAILABLE.Remove(a)
+    Next
+    ListpkgAVAILABLE.UnSelectAll
+    Else
+     If ListpkgUPGRADE.Visible = True Then
+      For Each a In ListpkgUPGRADE.Selection
+      s = ListpkgUPGRADE[a].Text
+      s = Scan(s, "* * *")[0]
+      txtpkg.Text = txtpkg.Text & " " & s
+      ' ListpkgUPGRADE.Remove(a)
+    Next
+     ListpkgUPGRADE.UnSelectAll
+    Endif
+    Endif
+    Endif
+End
+
+Public Sub BTNSELECTALL_Click()
+
+If ListpkgINSTALLATI.Visible = True Then
+  ListpkgINSTALLATI.SelectAll
+  Else
+    If ListpkgAVAILABLE.Visible = True Then
+      ListpkgAVAILABLE.SelectAll
+      Else
+        If ListpkgUPGRADE.Visible = True Then
+          ListpkgUPGRADE.SelectAll
+          Else
+        Endif
+    Endif
+Endif
+
+End
+
+
+Public Sub BTNINSTALL_Click()
+  
+    Dim a As String
+    Dim s As String
+    'Dim schk As String
+    'Dim spkg As String
+    'Dim $pkgchk As String
+    'Dim j As Byte
+    $PKGINSTALL = ""
+
+    If LISTPKGAVAILABLE.Visible = True 
+       For Each a In ListpkgAVAILABLE.Selection
+         s = ListpkgAVAILABLE[a].Text
+         s = Right(Left(s, 135), 75)
+'VERIFICA SE IL PROGRAMMA È PRESENTE NEI REPO RPM*******         
+         $PKGINREPO = ListpkgAVAILABLE[a].Text
+         $PKGREPO = Split($PKGINREPO, " ", "", True)
+         $PKGINREPO = LCase($PKGREPO[0])
+
+'*******************************************************         
+         $PKGINSTALL = $PKGINSTALL & " " & s 
+         ListpkgAVAILABLE.Remove(a)
+       Next
+       If $PKGINSTALL = "" Then
+         Message.Info("Select an App!", "OK") '($SELECTPKG, "OK")
+       Else
+         ListpkgAVAILABLE.UnSelectAll
+         Me.Mouse = Mouse.Wait 
+         TABHIDE
+         Btnclear_Click
+         txtConsole.Visible = True
+         CERCAINREPO
+'COMANDO SPOSTATO IN CERCAINREPO************************
+        ' Print #$hProcess, "flatpak install " & spkg & gb.NewLine; ' & " | tee /dev/null " & User.Home & "/last.log"    
+       Endif
+    Endif
+End
+Public Sub BTNUNSELECTALL_Click()
+  If ListpkgINSTALLATI.Visible = True Then
+  ListpkgINSTALLATI.UnSelectAll
+  Else
+    If ListpkgAVAILABLE.Visible = True Then
+      ListpkgAVAILABLE.UnSelectAll
+      Else
+        If ListpkgUPGRADE.Visible = True Then
+          ListpkgUPGRADE.UnSelectAll
+          Else
+        Endif
+    Endif
+Endif
+  
+End
+
+
+Public Sub TIMERUPLISTE_Timer()
+
+  FLOADLISTE.Show
+  TimerUPLISTE.Enabled = False 
+
+End
+
+Public Sub BTNREMOVE_Click()
+    Dim a As String
+    Dim s As String
+    Dim spkg As String
+    spkg = ""
+    If ListpkgINSTALLATI.Visible = True 
+       For Each a In ListpkgINSTALLATI.Selection
+         s = ListpkgINSTALLATI[a].Text
+         s = Right(Left(s, 135), 75)
+         spkg = spkg & " " & s 
+         LISTPKGINSTALLATI.Remove(a)
+       Next
+       If spkg = "" Then
+         Message.Info("Select an App!", "OK") '($SELECTPKG, "OK")
+       Else
+         ListpkgINSTALLATI.UnSelectAll
+         Me.Mouse = Mouse.Wait 
+         TABHIDE
+         Btnclear_Click
+         txtConsole.Visible = True
+         Print #$hProcess, "flatpak uninstall " & spkg & gb.NewLine; ' & " | tee /dev/null " & User.Home & "/last.log"    
+       Endif
+    Endif
+End
+
+
+Public Sub PictureBox1_MouseDown()
+
+End
+
+Public Sub BTNABOUT_Click()
+ FABOUT.Show
+End
+Public Sub BTNUPDATELISTE_Click()
+
+  FLOADLISTE.Show
+End
+
+
+Public Sub BTNREPO_Click()
+  FREPO.Show
+End
+
+
+Public Sub CHKALLUPDATE_Click()
+
+  If LISTPKGUPGRADE.Visible = True Then
+     LISTPKGUPGRADE.UnSelectAll
+  Endif
+
+End
+
+Public Sub BTNRESOLUTION_Click()
+RESOLUTION
+End
+Public Sub BTNINFOBROWSER_Click()
+    Dim a As String
+    Dim s As String
+
+    If LISTPKGAVAILABLE.Visible = True 
+       For Each a In ListpkgAVAILABLE.Selection
+         s = ListpkgAVAILABLE[a].Text
+         s = Right(Left(s, 135), 75)
+       Next
+       If s = "" Then
+         Message.Info("Select an App!", "OK") '($SELECTPKG, "OK")
+       Else
+          Shell "xdg-open https://flathub.org/apps/details/" & Replace(s, " ", " ")
+       Endif
+    Endif 
+    If ListpkgINSTALLATI.Visible = True 
+       For Each a In ListpkgINSTALLATI.Selection
+         s = ListpkgINSTALLATI[a].Text
+         s = Right(Left(s, 135), 75)
+       Next
+       If s = "" Then
+         Message.Info("Select an App!", "OK") '($SELECTPKG, "OK")
+       Else
+         Shell "xdg-open https://flathub.org/apps/details/" & Replace(s, " ", " ")
+       Endif 
+    Endif
+
+End
+

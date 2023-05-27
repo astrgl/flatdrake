@@ -1,0 +1,54 @@
+' Gambas class file
+
+
+Public Sub Form_Open()
+  'FMAIN.Enabled = False
+  FMAIN.FMAINLOCK
+  Timer1.Enabled = True
+End
+Public Sub form_Close()
+  'FMAIN.Enabled = True
+  FMAIN.FMAINUNLOCK
+End
+Public Sub BTNOK_Click()
+
+  Print #Fmain.$hProcess, CMBSELEZIONE.Text & gb.NewLine;
+  Me.Close
+
+End
+
+
+Public Sub Timer1_Timer()
+  Timer1.Enabled = False
+  TextArea1.Text = FMAIN.TXTCONSOLE.Text
+
+  TextArea1.Visible = True
+  Dim i As Integer
+  Dim n As Integer
+  Dim x As Integer
+  i = -1
+  'TextArea1.Text = FMAIN.$sText
+  x = Left(Right(TextArea1.Text, 4), 1)
+  For i = 0 To x
+    
+    CMBSELEZIONE.add(n)
+    n = n + 1
+  Next
+  CMBSELEZIONE.Index = 0
+
+  
+
+End
+Public Sub BTNNO_Click()
+ BTNNO.Enabled = False
+ FMAIN.BTNSTOP_CLICK
+ Wait 0.5
+ Fmain.Btnclear_click
+ Fmain.Mouse = Mouse.Default
+' Fmain.Enabled = True
+ 'Fmain.TMPLISTCLEAN
+ '$SECURE = 1
+ Me.Close  
+  
+End
+

@@ -1,0 +1,33 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,114,42)
+  Icon = Picture["flatdrake.svg"]
+  { Label1 Label
+    MoveScaled(1,36,16,4)
+    Border = Border.Plain
+  }
+  { !CMBSELEZIONE ComboBox
+    MoveScaled(1.4286,36.2857,7.7143,3.4286)
+    #Public = True
+  }
+  { BTNOK Button
+    MoveScaled(9,36.2857,7.7143,3.4286)
+    Picture = Picture["icon:/16/apply"]
+  }
+  { TextArea1 TextArea
+    MoveScaled(1,2,112,33)
+    Wrap = True
+  }
+  { BTNNO Button
+    MoveScaled(97,37,16,4)
+    Picture = Picture["icon:/16/stop"]
+  }
+  { Label2 Label
+    MoveScaled(41,37,8,3)
+  }
+  { Timer1 #Timer
+    #MoveScaled(64,34)
+    Delay = 300
+  }
+}

@@ -1,0 +1,27 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,114,60)
+  Icon = Picture["flatdrake.svg"]
+  { BTNSI Button
+    MoveScaled(1,55,16,4)
+    Text = ("YES")
+    Picture = Picture["icon:/16/apply"]
+  }
+  { BTNNO Button
+    MoveScaled(96,55,16,4)
+    Text = ("NO")
+    Picture = Picture["icon:/16/stop"]
+  }
+  { TextArea1 TextArea
+    MoveScaled(1,1,112,53)
+    Visible = False
+    Font = Font["Nimbus Mono L"]
+    Alignment = Align.Left
+    Wrap = True
+  }
+  { Timer1 #Timer
+    #MoveScaled(69,53)
+    Delay = 300
+  }
+}

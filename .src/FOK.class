@@ -1,0 +1,27 @@
+' Gambas class file
+
+
+Public Sub BTNOK_Click()
+  BTNOK.Enabled = False
+  FMAIN.TIMERUPLISTE.Enabled = True
+  Me.Close 
+
+End
+
+Public Sub Form_Open()
+' FMAIN.Enabled = False
+ FMAIN.FMAINLOCK
+ If FRUN.Visible = True Then
+   FRUN.Close
+ Endif
+End
+
+Public Sub Label1_MouseDown()
+
+  
+
+End
+Public Sub form_Close()
+  'FMAIN.Enabled = True
+  FMAIN.FMAINUNLOCK
+End

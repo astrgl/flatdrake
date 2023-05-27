@@ -1,0 +1,121 @@
+' Gambas class file
+
+Public $LOADLIST As String
+Public $LOADINST As String
+Public $LOADNONINST As String
+Public $LOADAGG As String
+Public $LOADREPO As String
+Public $UPDATEDIPS As String
+
+Public Sub Form_Open()
+
+      ' $LOADLIST = Replace(ss$TTP[33], "_", " ")
+      ' $LOADINST = Replace(ss$TTP[34], "_", " ")
+      ' $LOADNONINST = Replace(ss$TTP[35], "_", " ")
+      ' $LOADAGG = Replace(ss$TTP[36], "_", " ")
+     'FMAIN.Enabled = False
+     FMAIN.FMAINLOCK
+     
+     $LOADLIST = "Loading List ..."
+     $LOADINST = "Loading Installed App"
+     $LOADNONINST = "Loading App Not Installed"
+     $LOADAGG = "Loading Updates"
+     $LOADREPO = "Loading Package in RPM Repo"
+     TXTSTATO.Text = $LOADLIST
+End
+Public Sub form_Close()
+ ' FMAIN.Enabled = True
+   FMAIN.FMAINUNLOCK
+End
+
+
+Public Sub Timer1_Timer()
+
+  Dim b As Byte
+
+' Dim flUPD As File  
+' Dim jUPD As Byte
+' Dim s$UPD As String
+' Dim ss$UPD As New String[]
+  ' If Fmain.$RPMPATH = "" 
+    TXTSTATO.Text = $LOADREPO 
+    For b = 1 To 10 
+       ProgressBar1.Value = b / 100
+       BTNSKIP.Enabled = False
+       Wait 0.01
+     Next
+    TXTSTATO.Text = $LOADREPO
+    Shell "dnf list > " & User.Home &/ ".config/flatdrake/repo.txt" Wait 
+    For b = 10 To 30 
+       ProgressBar1.Value = b / 100
+     Next 
+    TXTSTATO.Text = $LOADINST 
+    Shell "flatpak list |expand -t 60,135,160,175,185 >" & User.Home &/ ".config/flatdrake/installati.txt" Wait
+     For b = 30 To 50
+       ProgressBar1.Value = b / 100
+       Wait 0.01
+     Next
+     TXTSTATO.Text = $LOADNONINST
+     Shell "flatpak remote-ls |expand -t 60,135,160,175,185 >" & User.Home &/ ".config/flatdrake/noninstallati.txt" Wait
+     For b = 50 To 80
+       ProgressBar1.Value = b / 100
+       Wait 0.01
+     Next
+      TXTSTATO.Text = $LOADAGG
+     Shell "flatpak update |expand -t 05,10,85,95,100,110,115 >" & User.Home &/ ".config/flatdrake/updates.txt |echo n" Wait
+    ' Shell "echo " & User.Home &/ ".config/flatdrake/updates.txt" Wait
+     For b = 80 To 100
+     ProgressBar1.Value = b / 100
+     Wait 0.01
+      Next
+     If ProgressBar1.Value = 1 Then
+       Fmain.Btnclear_click
+       FMAIN.btncerca_CLICK
+       'Fmain.Btncleartxtpkg_click
+       Me.Close
+     Endif
+     Timer1.Enabled = False
+     
+     'VERIFICA SE PRESENTI AGGIORNAMENTI
+      '  If Exist(User.Home &/ ".config/dnfdrake/locktray") Then
+      '      flUPD = Open User.Home &/ ".config/dnfdrake/locktray" For Read 
+      '    
+      '         While Not Eof(flUPD)
+      '           Input #flUPD, s$UPD
+      '           ss$UPD.Add(s$UPD)
+      '          Wend
+      '           Close #flUPD
+      '       If ss$UPD.max > -1 Then
+      '          For jUPD = 0 To ss$UPD.Max
+      '          $UPDATEDIPS = Replace(ss$UPD[0], "_", " ")
+      '         
+      '          Next
+      '       Endif
+      '      flUPD.Close
+      '      
+      '     If $UPDATEDIPS = 1 Then
+      '       File.Save(User.Home &/ "/.config/dnfdrake/locktray", "0")
+      '       Fmain.Cmbtipo.index = 3
+      '       Fmain.btncerca_CLICK
+      '     Endif
+      ' Endif
+
+End
+
+
+
+
+Public Sub TXTSTATO_MouseDown()
+
+  
+
+End
+Public Sub BTNSKIP_Click()
+
+   BTNSKIP.Enabled = False
+   Timer1.Enabled = False
+   Fmain.Btnclear_click
+   'Fmain.Btncleartxtpkg_click
+   Me.Close
+
+End
