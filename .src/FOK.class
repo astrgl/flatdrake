@@ -11,6 +11,7 @@ End
 Public Sub Form_Open()
 ' FMAIN.Enabled = False
  FMAIN.FMAINLOCK
+ BTNOK.Picture = Picture.Load("/usr/share/flatdrake/ok.png")
  If FRUN.Visible = True Then
    FRUN.Close
  Endif

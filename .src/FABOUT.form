@@ -7,11 +7,10 @@
     MoveScaled(3,3,57,4)
     Font = Font["+7"]
     Alignment = Align.Center
-    Text = ("FLATDRAKE 1.1.1")
+    Text = ("FLATDRAKE 1.3.5")
   }
   { BTNCLOSE Button
     MoveScaled(24,58,16,4)
-    Picture = Picture["icon:/16/quit"]
   }
   { TextArea1 TextArea
     MoveScaled(6,8,52,49)

@@ -3,6 +3,7 @@
 Public Sub Form_Open()
 
 'BTNCLOSE.Text = Fmain.Btnclose.Text
+BTNCLOSE.Picture = Picture.Load("/usr/share/flatdrake/close.png")
 TextArea1.Text = File.Load("/usr/share/flatdrake/flatdrake-ABOUT")
 Fmain.FMAINLOCK
 
@@ -18,5 +19,11 @@ Public Sub BTNCLOSE_Click()
 
   BTNCLOSE.Enabled = False
   Me.Close
+
+End
+
+Public Sub LBLTITOLO_MouseDown()
+
+  
 
 End

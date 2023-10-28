@@ -1,0 +1,134 @@
+' Gambas class file
+
+' Gambas class file
+Private $LOCK As String
+Public $CONFIGDRAKETRAY As Integer
+
+Public Sub Form_Open()
+'testi e tooltip
+ Dim flTTP As File  
+ Dim jTTP As Byte
+ Dim s$TTP As String
+ Dim ss$TTP As New String[]
+'TOOLTIP************************************************************************
+  BTNESCI.Tooltip = FMAIN.BTNCLOSE.Tooltip
+  flTTP = Open "/usr/share/flatdrake/flatdrake-TTP-en_GB" For Read   ' ...oppure "Input"
+  While Not Eof(flTTP)
+  Input #flTTP, s$TTP
+  ss$TTP.Add(s$TTP)
+  Wend
+    Close #flTTP
+    For jTTP = 0 To ss$TTP.Max
+    BTNAPPLY.Tooltip = Replace(ss$TTP[23], "_", " ") 
+    CHKDNFDRAKETRAY.Tooltip = Replace(ss$TTP[24], "_", " ") 
+    CHKDNFDRAKETRAYLAUNCH.Tooltip = Replace(ss$TTP[25], "_", " ") 
+    CHKCOLORTEXT.Tooltip = Replace(ss$TTP[26], "_", " ") 
+  Next
+'  
+   flTTP.Close
+   
+   BTNESCI.Picture = Picture.Load("/usr/share/flatdrake/close.png")
+   BTNAPPLY.Picture = Picture.Load("/usr/share/flatdrake/ok.png")
+
+'VERIFICA SE DRAKETRAY È IN ESECUZIONE******************************************  
+ Shell "ps aux | grep gbr3 | grep draketray | wc -l" Wait To $LOCK
+ If Right(Left($LOCK)) = "2" Then 
+     LBLDRAKETRAYSTATUS.Text = "Draketray is running"
+  Else 
+     LBLDRAKETRAYSTATUS.Text = "Draketray is not running"
+  Endif 
+  If Exist("/usr/bin/draketray.gambas") Then
+    CHKDNFDRAKETRAY.Enabled = True
+    CHKDNFDRAKETRAYLAUNCH.Enabled = True
+    If Exist(User.Home &/ "/.config/draketray/config")
+       $CONFIGDRAKETRAY = Val(File.Load(User.Home &/ "/.config/draketray/config")) 
+       If $CONFIGDRAKETRAY = 2 Or If $CONFIGDRAKETRAY = 3 Then
+         CHKDNFDRAKETRAY.Value = True
+       Else 
+         CHKDNFDRAKETRAY.Value = False  
+       Endif
+    Endif  
+    If Exist(User.Home &/ ".config/autostart/draketray.desktop") Then
+       CHKDNFDRAKETRAYLAUNCH.Value = True
+    Endif
+ Endif
+ If FMAIN.$COLORTEXT = "NERO" Then
+    CHKCOLORTEXT.Value = False
+ Else 
+    CHKCOLORTEXT.Value = True   
+ Endif
+ 
+
+  FMAIN.FMAINLOCK
+
+
+End
+Public Sub Form_Close()
+  
+  FMAIN.FMAINUNLOCK
+  
+  
+End
+
+Public Sub BTNAPPLY_Click()
+  BTNAPPLY.Enabled = False
+  Dim fl As File
+  'INTERFACE CONFIG****************************************************************
+   If CHKCOLORTEXT.Value = True Then
+      fl = Open User.Home &/ "/.config/flatdrake/config.txt" For Create
+      Print #fl, "COLOR"
+      fl.Close
+      FMAIN.$COLORTEXT = "COLOR"
+   Else    
+      fl = Open User.Home &/ "/.config/flatdrake/config.txt" For Create
+      Print #fl, "NERO"
+      fl.Close
+      FMAIN.$COLORTEXT = "NERO"
+   Endif   
+    
+  'DRAKETRAY CONFIG****************************************************************
+     If CHKDNFDRAKETRAY.VALUE = True Then
+      ' If Right(Left($LOCK)) <> "2" Then
+      '     Fmain.$KILL = 2
+      '     Shell ("/usr/bin/draketray.gambas")
+      '     Sleep 1.1
+      ' Endif
+      If $CONFIGDRAKETRAY = 0 Then
+         File.Save(User.Home &/ "/.config/draketray/config", "2") 
+      Endif
+      If $CONFIGDRAKETRAY = 1 Then
+         File.Save(User.Home &/ "/.config/draketray/config", "3") 
+      Endif
+        ' If Not Exist(User.Home &/ "/.config/draketray/locktray") Then
+        '   Fmain.$KILL = 2
+        '   Shell ("/usr/bin/draketray.gambas")
+        ' Endif
+        
+   Else    
+      If $CONFIGDRAKETRAY = 2 Then
+         File.Save(User.Home &/ "/.config/draketray/config", "0") 
+      Endif
+      If $CONFIGDRAKETRAY = 3 Then
+         File.Save(User.Home &/ "/.config/draketray/config", "1") 
+      Endif
+   Endif
+  
+   If CHKDNFDRAKETRAYLAUNCH.VALUE = True And If Not Exist(User.Home &/ ".config/autostart/draketray.desktop") Then
+     If Not Exist(User.Home &/ ".config/autostart") Then
+        Shell ("mkdir " & User.Home &/ ".config/autostart")
+     Endif
+     Shell ("cp /usr/share/draketray/draketray.desktop  " & User.Home &/ ".config/autostart/")
+   Endif
+   If CHKDNFDRAKETRAYLAUNCH.VALUE = False And If Exist(User.Home &/ ".config/autostart/draketray.desktop") Then
+     Shell ("rm -f " & User.Home &/ ".config/autostart/draketray.desktop")
+   Endif
+  '***************************************************************************************
+  Me.Close 
+End
+
+Public Sub BTNESCI_Click()
+
+ BTNESCI.Enabled = False
+ Me.Close
+
+End

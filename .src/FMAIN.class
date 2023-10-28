@@ -1,6 +1,5 @@
 ' Gambas class file
 
-' Gambas class file
 Public $hProcess As Process
 Public $sText As String
 Public $DNFDRAKEASK As String
@@ -16,8 +15,12 @@ Public $CLOSEPASS As Integer
 Public $RISOLUZIONE As String
 Public $RISOLUZIONEX As Integer
 Public $RISOLUZIONEY As Integer
+Public $FULLSCREEN As Integer
 Public $DISTRO As String
-'Public $KILL As Integer
+Public $KILL As Integer
+Public $COLORTEXT As String
+Public $BTNRESOLUTION_TOOLTIP_MAXIM As String
+Public $BTNRESOLUTION_TOOLTIP_RESIZE As String
 
 Public Sub Form_Open()
 'TOOLTIP E TESTI*******************************************************************************
@@ -25,15 +28,27 @@ Public Sub Form_Open()
  Dim jTTP As Byte
  Dim s$TTP As String
  Dim ss$TTP As New String[]
+ 
+ Dim flCFG As File  
+ Dim jCFG As Byte
+ Dim s$CFG As String
+ Dim ss$CFG As New String[]
 '***********************************************************************************************  
   Dim $repo As String
-  'controllo esistenza delle directory del programma********************************************
+'controllo esistenza delle directory del programma********************************************
    If Not Exist(User.Home &/ ".config/flatdrake/") Then
-   Mkdir User.Home &/ "/.config/flatdrake/"
+      Mkdir User.Home &/ "/.config/flatdrake/"
    Endif
    If Not Exist(User.Home &/ ".config/flatdrake/log") Then
-   Mkdir User.Home &/ "/.config/flatdrake/log"
+      Mkdir User.Home &/ "/.config/flatdrake/log"
    Endif
+   If Not Exist(User.Home &/ ".config/flatdrake/config.txt") Then
+      File.Save(User.Home &/ "/.config/flatdrake/config.txt", "")
+      Dim fl As File
+      fl = Open User.Home &/ "/.config/flatdrake/config.txt" For Create
+      Print #fl, "NERO"
+      fl.Close
+   Endif 
  'INSTALLA FLATHUB SE NON INSTALLATO*************************************************************
  Shell "flatpak remotes " To $repo
   If InStr($repo, "flathub") > 0 Then
@@ -53,8 +68,8 @@ Public Sub Form_Open()
      Shell "ps aux | grep gbr3 | grep -w flatdrake.gambas | wc -l" Wait To $LOCK 
      $LOCKVAL = CInteger(Val(Right(Left($LOCK))))
      If $LOCKVAL > 2 Then
-     Message.Info("Please don't run multiple session of FlatDrake!", "OK")
-       Quit 
+        Message.Info("Please don't run multiple session of FlatDrake!", "OK")
+        Quit 
      Endif 
 'IMPOSTA LA LINGUA DI CONSOLE INGLESE*****************************************************************
         Print #$hProcess, "LANG=en_US.UTF-8" & gb.NewLine;
@@ -65,28 +80,6 @@ Public Sub Form_Open()
         Wait 0.1
         Print #$hProcess, "LC_CTYPE=en_US.UTF-8" & gb.NewLine;
 
- 'controllo esistenza delle directory del programma***************************************************
-    ' If Not Exist(User.Home &/ ".config/dnfdrake/") Then
-    '   Mkdir User.Home &/ "/.config/dnfdrake/"
-    ' Endif
-    ' If Not Exist(User.Home &/ ".config/dnfdrake/log") Then
-    '   Mkdir User.Home &/ "/.config/dnfdrake/log"
-    ' Endif
- 'MEMORIZZA IL BROWSER DI DEFAULT******************************************************************
- ' Shell "xdg-settings get default-web-browser" To $BROWSER
- ' If InStr($BROWSER, "chrome") Then
- '   $BROWSER = "google-chrome"
- ' Endif
- ' If InStr($BROWSER, "falkon") Then
- '   $BROWSER = "falkon"
- ' Endif
- ' If InStr($BROWSER, "firefox") Then
- '   $BROWSER = "firefox"
- ' Endif
- ' If InStr($BROWSER, "chromium") Then
- '   $BROWSER = "chromium-browser"
- ' Endif
- ' TXTPKG.Text = $BROWSER
  
  'Carica il pront**********************************************************************************
     $DNFDRAKEASK = "[Flatdrake Lavora Per Te]"
@@ -96,8 +89,6 @@ Public Sub Form_Open()
     TXTCONSOLE.Text = ""
 'TOOLTIP E TESTI*****************************************************************
   flTTP = Open "/usr/share/flatdrake/flatdrake-TTP-en_GB" For Read   ' ...oppure "Input"
-  'flTTP = Open "/usr/share/dnfdrake/flatdrake-TTP-en_GB" & $LANG For Read   ' ...oppure "Input"
-  'flTTP = Open User.Home & "/src/rpm/SOURCES/flatdrake/flatdrake-TTP-en_GB" For Read   ' ...oppure "Input"
   While Not Eof(flTTP)
   Input #flTTP, s$TTP
   ss$TTP.Add(s$TTP)
@@ -128,92 +119,73 @@ Public Sub Form_Open()
       BTNTABAVAILABLE.Tooltip = Replace(ss$TTP[18], "_", " ") 
       BTNTABUPDATE.Tooltip = Replace(ss$TTP[19], "_", " ") 
       CMBTIPO.Tooltip = Replace(ss$TTP[20], "_", " ") 
-      
-      
-      ' Btnpathfile.Tooltip = Replace(ss$TTP[1], "_", " ")
-      ' Cmbtipo.Tooltip = Replace(ss$TTP[5], "_", " ")
-      ' BtnCFG.Tooltip = Replace(ss$TTP[7], "_", " ")
-      ' Btndownload.Tooltip = Replace(ss$TTP[8], "_", " ")
-      ' Cmbtipoinfo.Tooltip = Replace(ss$TTP[10], "_", " ")
-      ' btninfo.Tooltip = Replace(ss$TTP[11], "_", " ")
-      ' Btncrono.Tooltip = Replace(ss$TTP[12], "_", " ")
-      ' Btnclear.Tooltip = Replace(ss$TTP[14], "_", " ")
-      ' btnpkg.Tooltip = Replace(ss$TTP[15], "_", " ") 
-      ' $HBOX1TOOLTIP = Replace(ss$TTP[17], "_", " ")
-      ' Listpkg.Tooltip = Replace(ss$TTP[18], "_", " ")
-      ' txtConsole.Tooltip = Replace(ss$TTP[19], "_", " ")
-      ' txtlang.Tooltip = Replace(ss$TTP[20], "_", " ")
-      ' Btncleartxtpkg.Tooltip = Replace(ss$TTP[24], "_", " ")
-      ' $DIALOGDIRTITLE = Replace(ss$TTP[25], "_", " ")
-      ' $DIALOGFILETITLE = Replace(ss$TTP[26], "_", " ")
-      ' $SELECTPKG = Replace(ss$TTP[27], "_", " ")  
-      ' BTNPICKER.Tooltip = Replace(ss$TTP[28], "_", " ")
-      ' $CERCAFILE = Replace(ss$TTP[29], "_", " ")
-      ' BTNDOWNDGRADE.Tooltip = Replace(ss$TTP[30], "_", " ") 
-      ' BTNCUSTOM.Tooltip = Replace(ss$TTP[31], "_", " ") 
-      ' BTNPKGUPDATE.Tooltip = Replace(ss$TTP[32], "_", " ") 
-      ' BTNEXTRA.Tooltip = Replace(ss$TTP[37], "_", " ") 
-      ' PCTCONNECT.Tooltip = Replace(ss$TTP[38], "_", " ")
-      ' PCTDISCONNECT.Tooltip = Replace(ss$TTP[39], "_", " ")
-      ' BTNSELECTALL.Tooltip = Replace(ss$TTP[40], "_", " ")
-      ' BTNUNSELECTALL.Tooltip = Replace(ss$TTP[41], "_", " ")
-      ' BTNTABINSTALLED.Tooltip = Replace(ss$TTP[42], "_", " ") 
-      ' BTNTABAVIABLE.Tooltip = Replace(ss$TTP[43], "_", " ") 
-      ' BTNTABUPDATE.Tooltip = Replace(ss$TTP[44], "_", " ") 
-      ' $NOTPACKAGES = Replace(ss$TTP[48], "_", " ") 
-      ' $DNFDRAKEASK = Replace(ss$TTP[49], "_", " ")
-      ' BTNDNFCLEAN.Tooltip = Replace(ss$TTP[51], "_", " ") 
-      ' Btnpathpkglist.Tooltip = Replace(ss$TTP[52], "_", " ") 
-      ' ListpkgINSTALLATI.Tooltip = Replace(ss$TTP[53], "_", " ")
-      ' ListpkgAVAILABLE.Tooltip = Replace(ss$TTP[53], "_", " ")  
-      ' ListpkgUPGRADE.Tooltip = Replace(ss$TTP[53], "_", " ") 
-      ' BTNADDPKGLIST.Tooltip = Replace(ss$TTP[54], "_", " ") 
-      ' BTNPKGLISTVIEW.Tooltip = Replace(ss$TTP[58], "_", " ") 
-      ' BTNPKGLISTCLEAN.Tooltip = Replace(ss$TTP[59], "_", " ") 
-      ' BTNEXCLUDE.Tooltip = Replace(ss$TTP[60], "_", " ") 
-      ' BTNAUTOREMOVE.Tooltip = Replace(ss$TTP[76], "_", " ") 
-      ' $AUTOREMOVETEXT = Replace(ss$TTP[77], "_", " ") 
-      ' $CMBTOOLTIP = Replace(ss$TTP[5], "_", " ")
-      ' BTNFULLSCREEN.Tooltip = Replace(ss$TTP[78], "_", " ") 
-      ' BTNRESIZE.Tooltip = Replace(ss$TTP[79], "_", " ") 
-      ' $SUSPENDONTTP = Replace(ss$TTP[81], "_", " ") 
-      ' $SUSPENDOFFTTP = Replace(ss$TTP[82], "_", " ") 
-      ' BTNMYREPO.Tooltip = Replace(ss$TTP[83], "_", " ")
+      BTNREPAIR.Tooltip = Replace(ss$TTP[21], "_", " ") 
+      BTNCONFIG.Tooltip = Replace(ss$TTP[22], "_", " ") 
+      $BTNRESOLUTION_TOOLTIP_MAXIM = Replace(ss$TTP[27], "_", " ") 
+      $BTNRESOLUTION_TOOLTIP_RESIZE = Replace(ss$TTP[28], "_", " ") 
      Next
    flTTP.Close
+'ICONE PULSANTI**********************************************
+  BTNCLOSE.Picture = Picture.Load("/usr/share/flatdrake/esci.png")
+  BTNUPDATELISTE.Picture = Picture.Load("/usr/share/flatdrake/refresh.png")
+  BTNABOUT.Picture = Picture.Load("/usr/share/flatdrake/info.png")
+  BTNCONFIG.Picture = Picture.Load("/usr/share/flatdrake/config.png")
+  BTNPKGUPDATE.Picture = Picture.Load("/usr/share/flatdrake/updatepkg.png")
+  BTNREMOVE.Picture = Picture.Load("/usr/share/flatdrake/remove.png")
+  BTNINSTALL.Picture = Picture.Load("/usr/share/flatdrake/add.png")
+  BTNSTOP.Picture = Picture.Load("/usr/share/flatdrake/stop.png")
+  BTNRESOLUTION.Picture = Picture.Load("/usr/share/flatdrake/fullscreen.png")
+  $FULLSCREEN = 1
+  BTNTABINSTALLED.Picture = Picture.Load("/usr/share/flatdrake/installed.png")
+  BTNTABAVAILABLE.Picture = Picture.Load("/usr/share/flatdrake/install.png")
+  BTNTABUPDATE.Picture = Picture.Load("/usr/share/flatdrake/update.png")
+  BTNCOMMAND.Picture = Picture.Load("/usr/share/flatdrake/terminal.png")
+  BTNCLEAR.Picture = Picture.Load("/usr/share/flatdrake/clear.png")
+  BTNWRITEPKG.Picture = Picture.Load("/usr/share/flatdrake/textlink.png")
+  TXTCLEARTXTPKG.Picture = Picture.Load("/usr/share/flatdrake/clear.png")
+  BTNCERCA.Picture = Picture.Load("/usr/share/flatdrake/search.png")
+  BTNINFOBROWSER.Picture = Picture.Load("/usr/share/flatdrake/browser.png")
  'CARICA L'IMMAGINE DELLA DISTRO*****************************
    Shell "lsb_release -d" To $DISTRO
+  ' $DISTRO = "OpenMandriva" 'SERVE PER TEST
   If InStr($DISTRO, "OpenMandriva", 0, gb.IgnoreCase) Then
       PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
      Else 
-       If InStr($DISTRO, "ROSA", 0, gb.IgnoreCase) Then
-       PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")
-       Spinner1.X = 390
-       Spinner1.Y = 300
-       Spinner1.Height = 170
-       Spinner1.Width = 170
-     Else 
-       PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/LINUX.png")
-       Spinner1.X = 512
-       Spinner1.Y = 490
-       Spinner1.Height = 90
-       Spinner1.Width = 90
+       ' PictureBox1.Picture = Picture.Load("/home/mauro/flatdrake/OMA.png")
+      If InStr($DISTRO, "ROSA", 0, gb.IgnoreCase) Then
+         PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")
+         Spinner1.X = 390
+         Spinner1.Y = 300
+         Spinner1.Height = 170
+         Spinner1.Width = 170
+    Else 
+         PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/LINUX.png")
+         Spinner1.X = 512
+         Spinner1.Y = 490
+         Spinner1.Height = 90
+         Spinner1.Width = 90
     Endif
-       ' PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/LINUX.png")
-       ' Spinner1.X = 512
-       ' Spinner1.Y = 490
-       ' Spinner1.Height = 90
-       ' Spinner1.Width = 90
   Endif
+  
   'IMPOSTA LA DIMENSIONE DELLA FINESTRA IN BASE ALLA RISOLUZIONE DELLO SCHERMO
   Shell "xrandr --current |grep '*'" To $RISOLUZIONE
   $RISOLUZIONEX = Val(Str(Right(Left($risoluzione, 7), 4)))
   $RISOLUZIONEY = Val(Str(Right(Left($risoluzione, 12), 4)))
   RESOLUTION
 
-    
-  '************************************************************  
-
+  'CARICA I PARAMETRI DI CONFIG*************************************************
+  $COLORTEXT = "NERO"
+  If Exist(User.Home &/ "/.config/flatdrake/config.txt") Then
+     flCFG = Open User.Home &/ "/.config/flatdrake/config.txt" For Read 
+     While Not Eof(flCFG)
+       Input #flCFG, s$CFG
+       ss$CFG.Add(s$CFG)
+     Wend
+     Close #flCFG
+     For jCFG = 0 To ss$CFG.Max
+         Try $COLORTEXT = Replace(ss$CFG[0], "_", " ")
+     Next 
+   Endif
 
   'Azzera le variabili***********************************************************
     TXTPKG.SetFocus
@@ -227,22 +199,20 @@ Public Sub Form_Open()
   
 End
 
-
-' Public Sub Process_Kill()
-'   Try Me.Close
-' End
 Public Sub Form_Close()
  If $CLOSEPASS = 0 Then
-      Dim iAnswer As Integer = Message.Question("Do you really want to go out?", "Yes", "No")
+      Dim iAnswer As Integer = Message.Question("Do_you_really_want_to_exit?", "Yes", "No")
   If (iAnswer = 1) Then
     $hProcess.Kill
+    EXITROUTIN
    ' Me.Close
     Else
       BTNCLOSE.Enabled = True
       Stop Event
   Endif
  Else 
-  $hProcess.Kill  
+  $hProcess.Kill
+  EXITROUTIN  
  Endif
   
   
@@ -725,7 +695,38 @@ Private Sub UpdateConsole()
 ' '*************************************************************************************
 
   Wend
+End 
+Public Sub DRAKETRAYUPDATE()
+' VERIFICA SE È ABILITATA LA NOTIFICA AGGIORNAMENTI CON DRAKETRAY
+    If Not Exist(User.Home &/ ".config/autostart/draketray.desktop") And If Not Exist(User.Home &/ ".config/dnfdrake/noautostart") Then
+       Dim $PID As String
+       Dim iAnswer As Integer = Message.Question("Update notification is not active. Do you want to enable it from DrakeTray?", "Yes", "No")
+       If (iAnswer = 1) Then
+         If Not Exist(User.Home &/ ".config/autostart") Then
+            Shell ("mkdir " & User.Home &/ ".config/autostart")
+         Endif
+         If Not Exist(User.Home &/ "/.config/draketray/locktray") Then
+            Shell ("/usr/bin/draketray.gambas") 
+            Sleep 1.1
+            $KILL = 2
+         Endif
+         Shell ("cp /usr/share/draketray/draketray.desktop  " & User.Home &/ ".config/autostart/")
+         Dim $CONFIGDRAKETRAY As Integer
+         $CONFIGDRAKETRAY = Val(File.Load(User.Home &/ "/.config/draketray/config")) 
+         If $CONFIGDRAKETRAY = 0 Then
+            File.Save(User.Home &/ "/.config/draketray/config", "2") 
+         Endif
+         If $CONFIGDRAKETRAY = 1 Then
+            File.Save(User.Home &/ "/.config/draketray/config", "3") 
+         Endif
+         ' FEXTRA.Show
+        Else
+          File.Save(User.Home &/ ".config/flatdrake/noautostart", "") 
+       Endif 
+    Endif  
 End
+
+
 Public Sub FMAINLOCK()
   
   CMBTIPO.Enabled = False
@@ -745,6 +746,8 @@ Public Sub FMAINLOCK()
   BTNTABAVAILABLE.Enabled = False
   BTNTABUPDATE.Enabled = False
   BTNCLEAR.Enabled = False
+  CHKALLUPDATE.Enabled = False
+  BTNCONFIG.Enabled = False
   
   
 End
@@ -767,8 +770,23 @@ Public Sub FMAINUNLOCK()
   BTNTABAVAILABLE.Enabled = True
   BTNTABUPDATE.Enabled = True
   BTNCLEAR.Enabled = True
+  CHKALLUPDATE.Enabled = True
+  BTNCONFIG.Enabled = True
   
-  
+End
+
+
+Private Sub EXITROUTIN()
+      Dim $PID As String
+
+       $hProcess.Kill
+    ' ' PARTE CHE SERVE A KILLARE IL PROCESSO DI DRAKETRAY SE È STATO LANCIATO DA FLATDRAKE ********** 
+      If $KILL = 2 Then
+        Shell "ps aux | grep gbr3 | grep -w draketray.gambas" Wait To $PID
+        $PID = Right(Left($PID, 16), 8)
+        Shell "kill " & $PID
+        Shell ("rm -f " & User.Home &/ ".config/draketray/locktray") Wait 
+      Endif  
 End
 
 
@@ -811,21 +829,25 @@ Private Sub CERCAUPDATE()
             'sp = Left(s, 13)
             p = p + ListpkgUPGRADE.Count
             ListpkgUPGRADE.add(p, Right$(s, -10))
-            'ListpkgUPGRADE.add(p, s & "     Upgrades")
-            ListpkgUPGRADE[p].Foreground = &H0033A0D9
+            If $COLORTEXT = "COLOR" Then
+               ListpkgUPGRADE[p].Foreground = &H0033A0D9
+            Endif 
         Else
            If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "        ") And If InStr(s, RTrim$(LTrim$(txtpkg.Text)), 0, gb.IgnoreCase) Then
-             
             p = p + ListpkgUPGRADE.Count
             ListpkgUPGRADE.add(p, Right$(s, -10))
-            ListpkgUPGRADE[p].Foreground = &H0033A0D9
+            If $COLORTEXT = "COLOR" Then
+               ListpkgUPGRADE[p].Foreground = &H0033A0D9
+            Endif 
            Endif    
         Endif
      Next
      If ListpkgUPGRADE.Count = 0 Then
        ListpkgUPGRADE.Mode = 0
        ListpkgUPGRADE.Add(1, $NOTPACKAGES)
-       ListpkgUPGRADE[1].Foreground = &H0033A0D9
+       If $COLORTEXT = "COLOR" Then
+          ListpkgUPGRADE[1].Foreground = &H0033A0D9
+       Endif 
        ListpkgUPGRADE.Enabled = False
      Endif
      t.Close
@@ -847,21 +869,26 @@ Private Sub CERCAAVAILABLE()
      For Each s In t.Lines
         If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") And If RTrim$(LTrim$(txtpkg.Text)) = "" Then
             p = p + ListpkgAVAILABLE.Count
-'            ListpkgAVAILABLE.add(p, s & "   Available")
             ListpkgAVAILABLE.add(p, s)
-            ListpkgAVAILABLE[p].Foreground = &H00F47E59
+            If $COLORTEXT = "COLOR" Then 
+               ListpkgAVAILABLE[p].Foreground = &H00F47E59
+            Endif 
         Else
                  If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") And If InStr(s, RTrim$(LTrim$(txtpkg.Text)), 0, gb.IgnoreCase)
                     p = p + ListpkgAVAILABLE.Count
                     ListpkgAVAILABLE.add(p, s)
-                    ListpkgAVAILABLE[p].Foreground = &H00F47E59
+                    If $COLORTEXT = "COLOR" Then
+                       ListpkgAVAILABLE[p].Foreground = &H00F47E59
+                    Endif 
                  Endif
         Endif
      Next
       If ListpkgAVAILABLE.Count = 0 Then
        ListpkgAVAILABLE.Mode = 0
        ListpkgAVAILABLE.Add(1, $NOTPACKAGES)
-       ListpkgAVAILABLE[1].Foreground = &H00F47E59
+       If $COLORTEXT = "COLOR" Then 
+          ListpkgAVAILABLE[1].Foreground = &H00F47E59
+      Endif 
        ListpkgAVAILABLE.Enabled = False
      Endif
      t.Close
@@ -885,12 +912,16 @@ Private Sub CERCAINSTALLED()
           p = p + ListpkgINSTALLATI.Count
          ' ListpkgINSTALLATI.add(p, s & "     Installed")
           ListpkgINSTALLATI.add(p, s)
-          ListpkgINSTALLATI[p].Foreground = &H0038D079
+           If $COLORTEXT = "COLOR" Then
+              ListpkgINSTALLATI[p].Foreground = &H0038D079
+           Endif 
      Else
           If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "system") And If InStr(s, RTrim$(LTrim$(txtpkg.Text)), 0, gb.IgnoreCase) Then
              p = p + ListpkgINSTALLATI.Count
              ListpkgINSTALLATI.add(p, s)
-             ListpkgINSTALLATI[p].Foreground = &H0038D079
+              If $COLORTEXT = "COLOR" Then
+                 ListpkgINSTALLATI[p].Foreground = &H0038D079
+              Endif 
           Endif                     
     
      Endif
@@ -898,7 +929,9 @@ Private Sub CERCAINSTALLED()
       If ListpkgINSTALLATI.Count = 0 Then
        ListpkgINSTALLATI.Mode = 0
        ListpkgINSTALLATI.Add(1, $NOTPACKAGES)
-       ListpkgINSTALLATI[1].Foreground = &H0038D079
+       If $COLORTEXT = "COLOR" Then
+          ListpkgINSTALLATI[1].Foreground = &H0038D079
+       Endif
        ListpkgINSTALLATI.Enabled = False
      Endif
      t.Close
@@ -967,8 +1000,11 @@ Private Sub BTNALLVIEW()
 End
 Private Sub RESOLUTION()
 
-If BTNRESOLUTION.Picture = Picture["icon:/16/fullscreen"] Then
-   BTNRESOLUTION.Picture = Picture["icon:/16/resize"] 
+If $FULLSCREEN = 1 Then
+'BTNRESOLUTION.Picture = Picture["icon:/16/fullscreen"] Then
+   BTNRESOLUTION.Picture = Picture.Load("/usr/share/flatdrake/restore.png")
+   $FULLSCREEN = 0
+   BTNRESOLUTION.Tooltip = $BTNRESOLUTION_TOOLTIP_RESIZE
    Fmain.X = 0
    Fmain.Y = 0
    Fmain.Height = ($RISOLUZIONEY - 70)
@@ -1001,7 +1037,9 @@ If BTNRESOLUTION.Picture = Picture["icon:/16/fullscreen"] Then
    BTNTABAVAILABLE.Y = BTNTABAVAILABLE.Y + ($RISOLUZIONEY - 768)
    BTNTABUPDATE.Y = BTNTABUPDATE.Y + ($RISOLUZIONEY - 768)
 Else 
-  BTNRESOLUTION.Picture = Picture["icon:/16/fullscreen"]
+  BTNRESOLUTION.Picture = Picture.Load("/usr/share/flatdrake/fullscreen.png")
+  $FULLSCREEN = 1
+  BTNRESOLUTION.Tooltip = $BTNRESOLUTION_TOOLTIP_MAXIM
   Fmain.X = 0
   Fmain.Y = 0
   Fmain.Height = 700
@@ -1502,6 +1540,9 @@ End
 Public Sub BTNRESOLUTION_Click()
 RESOLUTION
 End
+
+Public Sub BTNREPAIR_Click()
+End
 Public Sub BTNINFOBROWSER_Click()
     Dim a As String
     Dim s As String
@@ -1528,6 +1569,25 @@ Public Sub BTNINFOBROWSER_Click()
          Shell "xdg-open https://flathub.org/apps/details/" & Replace(s, " ", " ")
        Endif 
     Endif
+    If LISTPKGUPGRADE.Visible = True 
+       For Each a In LISTPKGUPGRADE.Selection
+         s = LISTPKGUPGRADE[a].Text
+         ' s = Right(Left(s, 135), 75)
+         s = Left(s, 75)
+       Next
+       If s = "" Then
+         Message.Info("Select an App!", "OK") '($SELECTPKG, "OK")
+       Else
+         Shell "xdg-open https://flathub.org/apps/details/" & Replace(s, " ", " ")
+       Endif 
+    Endif
+    
 
 End
 
+
+Public Sub BTNCONFIG_Click()
+
+  FCONGIG.Show
+
+End
