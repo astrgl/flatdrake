@@ -22,6 +22,7 @@ Public Sub Form_Open()
      $LOADAGG = "Loading Updates"
      $LOADREPO = "Loading Package in RPM Repo"
      TXTSTATO.Text = $LOADLIST
+     BTNSKIP.Picture = Picture.Load("/usr/share/flatdrake/skip.png")
 End
 Public Sub form_Close()
  ' FMAIN.Enabled = True

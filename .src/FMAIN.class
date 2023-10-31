@@ -154,10 +154,10 @@ Public Sub Form_Open()
        ' PictureBox1.Picture = Picture.Load("/home/mauro/flatdrake/OMA.png")
       If InStr($DISTRO, "ROSA", 0, gb.IgnoreCase) Then
          PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")
-         Spinner1.X = 390
-         Spinner1.Y = 300
-         Spinner1.Height = 170
-         Spinner1.Width = 170
+         Spinner1.X = 479
+         Spinner1.Y = 315
+         Spinner1.Height = 113
+         Spinner1.Width = 113
     Else 
          PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/LINUX.png")
          Spinner1.X = 512
@@ -201,7 +201,7 @@ End
 
 Public Sub Form_Close()
  If $CLOSEPASS = 0 Then
-      Dim iAnswer As Integer = Message.Question("Do_you_really_want_to_exit?", "Yes", "No")
+      Dim iAnswer As Integer = Message.Question("Do you really want to exit?", "Yes", "No")
   If (iAnswer = 1) Then
     $hProcess.Kill
     EXITROUTIN
