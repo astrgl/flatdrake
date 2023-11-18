@@ -9,11 +9,6 @@ Public $UPDATEDIPS As String
 
 Public Sub Form_Open()
 
-      ' $LOADLIST = Replace(ss$TTP[33], "_", " ")
-      ' $LOADINST = Replace(ss$TTP[34], "_", " ")
-      ' $LOADNONINST = Replace(ss$TTP[35], "_", " ")
-      ' $LOADAGG = Replace(ss$TTP[36], "_", " ")
-     'FMAIN.Enabled = False
      FMAIN.FMAINLOCK
      
      $LOADLIST = "Loading List ..."

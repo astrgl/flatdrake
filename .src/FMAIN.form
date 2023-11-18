@@ -180,4 +180,8 @@
   { BTNCONFIG Button
     MoveScaled(178,16,14.2857,4)
   }
+  { Label2 Label
+    MoveScaled(35,16,8,3)
+    Border = Border.Sunken
+  }
 }

@@ -214,24 +214,6 @@ Public Sub Form_Close()
   $hProcess.Kill
   EXITROUTIN  
  Endif
-  
-  
-  ' Dim $PID As String
-  
-  ' If Exist(User.Home & "/.config/dnfdrake/repolist.tmp") Then
-  '    Shell "rm -f " & User.Home & "/.config/dnfdrake/repolist.tmp "  
-  ' Endif
-  
-  
-  
-  
-  ' PARTE CHE SERVE A KILLARE IL PROCESSO DI DNFDRAKE SE È STATO LANCIATO DNFDRAKETRAY ********** 
-
-  ' If $KILL = 1 Then
-  '    Shell "ps aux | grep gbr3 | grep -w dnfdrake.gambas" Wait To $PID
-  '    $PID = Right(Left($PID, 16), 8)
-  '    Shell "kill " & $PID
-  ' Endif
 
 End
 
@@ -359,7 +341,6 @@ Public Sub Process_Read()
   Dim $STEP As Integer
   $STEP = 0
   
-  'Read #$hProcess, sStr, -2560 '-2560 sembra risolvere i problemi in listpkg e i blocchi durante i comandi
 'RADDOPPIATO IL VALORE PER ACCETTARE PIÙ PACCHETTI DURANTE LE INSTALLAZIONI********************************
   Read #$hProcess, sStr, -2560 '-2560 sembra risolvere i problemi in listpkg e i blocchi durante i comandi
   $sText = $sText & sStr
@@ -385,7 +366,11 @@ Public Sub Process_Read()
     '       If $SECUREMODE = "SECURE" Then
     '         FSINOSECURE.Show
     '       Else 
-          
+    
+    
+            Label2.Text = Len(sStr)
+            
+
              If FRUN.Visible = False
              Try $TOT = Right(Left(sStr, 15), 1)
                If Error Then 
@@ -397,7 +382,7 @@ Public Sub Process_Read()
                 If Error Then 
                   $PROGRESS = 1
                 Endif
-             FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of " & $TOT
+             FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of  " & $TOT
              
            Endif
   If InStr($sText, "Updating") > 0 Then 
@@ -462,22 +447,6 @@ If InStr($sText, "Which do you want to use") > 0 Then
 '       Endif
 ' '*********************************************************************************************
 
-  ' Endif 
-  ' ' If InStr($sText, "~]$") Or If InStr($sText, "]#") > 0 Then '*****VECCHIO CONTROLLO USATO PRIMA DEL CAMBIO DEL PRONT*************** 
-  '   If InStr($sText, $DNFDRAKEASK) > 0 Then
-  '     $STATUS = 0
-  '     $PRINTLOG = 0
-' 'SERVE A GESTIRE LA RICERCA CON OPZIONE TUTTI**********************************
-'         If $ListpkgWR = 3 And $ListpkgCK = 3 Then
-'           $ListpkgWR = 0
-'           $ListpkgCK = 0
-'         Endif
-'         If $ListpkgWR = 2 And $ListpkgCK = 2 Then
-'           btncerca_Click
-'         Endif
-'         If $ListpkgWR = 1 And $ListpkgCK = 1 Then
-'           btncerca_Click
-'         Endif
 ' 'COMANDI POSTUMI (MEMOCOMMAND)*************************************************
 '   'OM-PICKER********************************************       
 '        If $MEMOCOMMAND = "dnf repolist" Then
@@ -488,105 +457,9 @@ If InStr($sText, "Which do you want to use") > 0 Then
 '           Wait 2
 '           Fmain.TimerUPLISTE.Enabled = True
 '        Endif
-'   'EXCLUDE********************************************              
-'         If $MEMOCOMMAND = "EXCLUDETEST" Then
-'           EXCLUDETEST 
-'           $MEMOCOMMAND = ""
-'        Endif
-'        If $MEMOCOMMAND = "LISTUPDTEXCL" Then
-'         ' Wait 0.05  ' SE SI PREME ANNULLA SULLA FINESTRA DELLA PASSWORD IL PROGRAMMA VA IN STACKOVERFLOW
-'          Btnclear_Click
-'          TimerUPLISTE.Enabled = True
-'          $MEMOCOMMAND = ""
-'        Endif
-'   'MEMOCOMMAND MYREPO********************************************
-'        If $MEMOCOMMAND = "TMPREPOCLEAR" Then
-'           Print #$hProcess, "rm -f  " & User.Home & "/.config/dnfdrake/*.repo " & gb.NewLine;
-'           $MEMOCOMMAND = ""
-'           Wait 0.05
-'           FMYREPO.CERCAREPO
-'           Btnclear_Click
-'           Wait 0.05
-'           
-'        Endif 
-'   'MEMOCOMMAND AUTOREMOVE********************************************
-'        If $MEMOCOMMAND = "AUTOREMOVE" Then
-'           CERCAAUTOREMOVE
-'           $MEMOCOMMAND = ""          
-'        Endif
-'   'MEMOCOMMAND PULISCI SUSPEND ********************************************
-'        If $MEMOCOMMAND = "CLEARSUSPEND" Then
-'           $MEMOCOMMAND = ""
-'           VERIFYSUSPEND
-'           Btnclear_Click
-'        Endif     
-'  'MEMOCOMMAND MOUSEDEFAULT*************************************************
-'        If $MEMOCOMMAND = "MOUSEDEFAULT" Then
-'          Me.Mouse = Mouse.Default
-'          $MEMOCOMMAND = ""
-'        Endif
-' '**************************************************************************
-'        If $MEMOCOMMAND = "DISTROSYNCWAIT" Then
-'          $MEMOCOMMAND = ""
-'          VERIFYSUSPEND
-'          Wait 0.2
-'          Btnclear_Click
-'          txtConsole.Text = ""
-'          If $ABORT = 0 Then
-'             If BTNDISTUPDATE.Visible = True
-'               BTNDISTUPDATE_Click 
-'             Else 
-'               btnupdate_Click
-'             Endif 
-'          Else 
-'             $ABORT = 0
-'             Fmain.Enabled = True
-'          Endif
-'        Endif
-' '**************************************************************************
-'        If $MEMOCOMMAND = "RECOVERSUSPEND" Then
-'             If $COUNTRECOVERSUSPEND = 1 Then
-'                 $MEMOCOMMAND = ""
-'                 FRESETSUSPEND.Show
-'                 $COUNTRECOVERSUSPEND = 0
-'             Else 
-'                 $COUNTRECOVERSUSPEND = $COUNTRECOVERSUSPEND + 1 
-'                 $CLEARLOGSUSPEND = 0
-'             Endif
-'        Endif
-' 
-' '**************************************************************************
-'        If $MEMOEXEC = "txtpkgclear" And $ListpkgWR = 0 Then
-'           Btncleartxtpkg_Click
-'           $MEMOEXEC = ""
-'        Endif
-' '**************************************************************************
-'        If $ListpkgWR = 0 And $CHKERROR > 0 Then
-'           Try Message.Info("N°" & $CHKERROR & " ERRORS HAVE BEEN DETECTED, PLEASE IMPROVE THE SEARCH CRITERIA", "OK")
-'           $CHKERROR = 0
-'        Endif
-'     Else
-'        $STATUS = 1
-'     Endif
+
 ' '**************************************************************************
   UpdateConsole
- 
-' 'controllo esecuzione comandi per sequenza comandi di ricerca************
-'   If $ListpkgWR = 1 And $STATUS = 1 Then
-'     $ListpkgCK = 1 
-'   Endif
-'   If $ListpkgWR = 2 And $STATUS = 0 Then
-'     $ListpkgCK = 0
-'   Endif
-'   If $ListpkgWR = 2 And $STATUS = 1 And $ListpkgCK = 0 Then
-'     $ListpkgCK = 2
-'   Endif
-'   If $ListpkgWR = 3 And $STATUS = 0 Then
-'     $ListpkgCK = 0
-'   Endif
-'   If $ListpkgWR = 3 And $STATUS = 1 And $ListpkgCK = 0 Then
-'     $ListpkgCK = 3
-'   Endif
 '***********************************************************************
 If InStr(TXTCONSOLE.Text, "[Flatdrake Lavora Per Te]") Or If InStr(BTNCOMMAND.Text, " ^") Then
   Spinner1.Visible = False
@@ -601,56 +474,12 @@ Private Sub UpdateConsole()
 
   Dim iPos As Integer
   Dim sStr As String
- ' Dim s As String
- ' Dim sok As String
-  
-  ' Dim smid As String[]   'da elimiare se dopo 10 versioni se non presenta errori di ricerca 1.9.6
- 'Dim p As Integer
 
   While Len($sText)
     iPos = InStr($sText, gb.NewLine)
     If iPos = 0 Then iPos = Len($sText)
      sStr = Normalize(Left$($sText, iPos))
-'  ' pulizia stringa per lista pacchetti in listpkg********************************************************
-'      ' questo codice serve a levare gli spazi prima e dopo il nome del pacchetto  " RTrim$(LTrim$(txtpkg.Text)))  "
-'      If InStr($sText, RTrim$(LTrim$(txtpkg.Text))) > 0 Then       
-'      If InStr($sText, ".x86_64") Or InStr($sText, ".noarch") Or InStr(s, ".znver1") Or InStr(s, ".aarch64") Or InStr($sText, ".i686") Then
-'        Try s = Scan($sText, "*[    ]*")[0]
-'         If Error Then
-'            $CHKERROR = $CHKERROR + 1
-'         Endif
-'        ' smid = Split(s, " ")   'da elimiare se dopo 10 versioni se non presenta errori di ricerca
-'        ' For Each s In smid    'da elimiare se dopo 10 versioni se non presenta errori di ricerca
-'         If InStr(s, RTrim$(LTrim$(txtpkg.Text))) > 0 Then
-'          s = LTrim(s)
-'          If Comp(s, sok) = 0 Then
-'         Else
-' 'MODIFICAPER LA VISUALIZZAZIONE DEI PACCHETTI SELEZIONABILI
-'         If $ListpkgWR = 3 Then
-'           p = 1 + ListpkgINSTALLATI.Count
-'           ListpkgINSTALLATI.Add(p, s)
-'         Endif
-'         If $ListpkgWR = 2 Then
-'           p = 1 + ListpkgAVAILABLE.Count
-'           ListpkgAVAILABLE.Add(p, s)
-'         Endif
-'         If $ListpkgWR = 1 Then
-'           p = 1 + ListpkgUPGRADE.Count       
-'           ListpkgUPGRADE.Add(p, s)
-'         Endif
-'         If $ListpkgWR = 0 
-'            p = 1 + Listpkg.Count
-'            Listpkg.Add(p, s) 
-'         Endif
-'        ' Listpkg.Add(p, s)
-' '************************************************************
-'         sok = s
-'         Endif
-'         Endif
-'       ' Next   'da elimiare se dopo 10 versioni se non presenta errori di ricerca
-' 
-'      Endif
-'      Endif
+
 '******************************************************************************************
     $sText = Mid$($sText, iPos + 1)
     txtConsole.Pos = txtConsole.Length
@@ -665,34 +494,6 @@ Private Sub UpdateConsole()
     sStr = Replace(sStr, "[?25h", "")
 '*****************************************************
     txtConsole.Insert(sStr)
-'*****SERVE PER NON MOSTRARE IL ^C DI ANNULLA*****************
-   ' If InStr(txtConsole.text, "^C") > 0 Then
-    '   Btnclear_Click
-    ' Endif
-'*****************************************AZIONI EXTRA ************************************************
-'     
-' 'INVIA L'ULTIMA RIGA ALLA FINESTRA FRUN E CONTROLLA GLI ERRORI************************    
-'     If FPROGRESSWAIT.Visible = True Then
-'        FPROGRESSWAIT.MONITORVIEW.Text = sStr
-'     Endif
-' 'verifica se l'operazione ha errori*************************** CORREGGERE QUESTO!!!!  
-'     If sStr = $DNFDRAKEASK And FRUN.ProgressBar1.Pulse = True Then 
-'       FRUN.ProgressBar1.Pulse = False    
-'       FRUN.ProgressBar1.Value = 1
-'       FRUN.BTNSTOP.Text = Fmain.Btnclose.Text
-'       FRUN.MONITORVIEW.Visible = False
-'       FRUN.Text = "DnfDrake,  " & "Error!" 
-'       FERROR.Show
-'       Wait 0.2
-'       FERROR.TextArea1.Text = txtConsole.Text
-'     Endif
-' 
-' 
-' 'CHIUSURA FPROGRESSWAIT **************************************************************
-'       If sStr = $DNFDRAKEASK And FPROGRESSWAIT.Visible = True Then
-'          FPROGRESSWAIT.Close
-'       Endif
-' '*************************************************************************************
 
   Wend
 End 
@@ -1011,6 +812,7 @@ If $FULLSCREEN = 1 Then
    Fmain.Width = ($RISOLUZIONEX)
    Btnclose.X = Btnclose.X + ($RISOLUZIONEX - 1366)
    BTNABOUT.X = BTNABOUT.X + ($RISOLUZIONEX - 1366)
+   BTNCONFIG.X = BTNCONFIG.X + ($RISOLUZIONEX - 1366)
    BTNUPDATELISTE.X = BTNUPDATELISTE.X + ($RISOLUZIONEX - 1366)
    Btncommand.Y = Btncommand.Y + ($RISOLUZIONEY - 768)
    CORNICE.Width = CORNICE.Width + ($RISOLUZIONEX - 1366)
@@ -1296,8 +1098,6 @@ Public Sub BTNTABUPDATE_Click()
 End
 
 Public Sub CMBTIPO_Click()
-
-  
 
 End
 
