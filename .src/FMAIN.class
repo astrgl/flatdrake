@@ -368,7 +368,7 @@ Public Sub Process_Read()
     '       Else 
     
     
-            Label2.Text = Len(sStr)
+           ' Label2.Text = Len(sStr)
             
 
              If FRUN.Visible = False

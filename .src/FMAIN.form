@@ -182,6 +182,7 @@
   }
   { Label2 Label
     MoveScaled(35,16,8,3)
+    Visible = False
     Border = Border.Sunken
   }
 }
