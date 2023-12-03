@@ -28,31 +28,37 @@
     Text = ("Interface Config")
   }
   { Label1 Label
-    MoveScaled(3,8,24,4)
+    MoveScaled(3,8,25,4)
     Border = Border.Plain
     BorderRadius = 10
   }
   { Label2 Label
-    MoveScaled(3,24,24,4)
+    MoveScaled(3,24,25,4)
     Border = Border.Plain
     BorderRadius = 10
   }
   { Label3 Label
-    MoveScaled(37,24,24,4)
+    MoveScaled(35.4286,24,25,4)
     Border = Border.Plain
     BorderRadius = 10
   }
+  { Label4 Label
+    MoveScaled(35.4286,8,25,4)
+    Border = Border.Plain
+    BorderRadius = 10
+    Text = ("Themes: ")
+  }
   { CHKCOLORTEXT CheckBox
-    MoveScaled(4,8,16,4)
+    MoveScaled(4,8,20,4)
     Text = ("Color Text")
   }
   { CHKDNFDRAKETRAY CheckBox
-    MoveScaled(5,24,20,4)
+    MoveScaled(4,24,20,4)
     Enabled = False
     Text = ("Check Updates")
   }
   { CHKDNFDRAKETRAYLAUNCH CheckBox
-    MoveScaled(38,24,21,4)
+    MoveScaled(37,24,20,4)
     Enabled = False
     Text = ("Run on Startup")
   }
@@ -67,5 +73,11 @@
     Alignment = Align.Center
     Border = Border.Plain
     BorderRadius = 10
+  }
+  { CMBTHEMES ComboBox
+    MoveScaled(44.2857,8.4286,15,3.1429)
+    Background = Color.Transparent
+    List = [("Oxygen"), ("Breeze"), ("Breeze Dark")]
+    Border = False
   }
 }

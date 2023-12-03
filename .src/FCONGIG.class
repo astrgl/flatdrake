@@ -27,8 +27,8 @@ Public Sub Form_Open()
 '  
    flTTP.Close
    
-   BTNESCI.Picture = Picture.Load("/usr/share/flatdrake/close.png")
-   BTNAPPLY.Picture = Picture.Load("/usr/share/flatdrake/ok.png")
+   BTNESCI.Picture = Picture.Load(FMAIN.$PATHICONS & "close" & FMain.$THEMESSUFFIX)
+   BTNAPPLY.Picture = Picture.Load(FMAIN.$PATHICONS & "ok" & FMain.$THEMESSUFFIX)
 
 'VERIFICA SE DRAKETRAY È IN ESECUZIONE******************************************  
  Shell "ps aux | grep gbr3 | grep draketray | wc -l" Wait To $LOCK
@@ -58,6 +58,14 @@ Public Sub Form_Open()
     CHKCOLORTEXT.Value = True   
  Endif
  
+ If FMain.$THEMES = "Oxygen" Then
+     CMBTHEMES.Index = 0
+  Else If FMain.$THEMES = "Breeze" Then 
+     CMBTHEMES.Index = 1
+  Else If FMain.$THEMES = "BreezeDark" Then
+     CMBTHEMES.Index = 2   
+  Endif
+  
 
   FMAIN.FMAINLOCK
 
@@ -123,6 +131,22 @@ Public Sub BTNAPPLY_Click()
      Shell ("rm -f " & User.Home &/ ".config/autostart/draketray.desktop")
    Endif
   '***************************************************************************************
+  If CMBTHEMES.Index = 0 Then
+      File.Save(User.Home &/ "/.config/flatdrake/themes", "Oxygen")
+      FMain.$THEMES = "Oxygen"
+      FMain.$THEMESSUFFIX = ".png"
+      FMain.LOADICONS
+   Else If CMBTHEMES.Index = 1 Then
+      File.Save(User.Home &/ "/.config/flatdrake/themes", "Breeze")
+      FMain.$THEMES = "Breeze"
+      FMain.$THEMESSUFFIX = "-B.svg"
+      FMain.LOADICONS
+   Else If CMBTHEMES.Index = 2 Then
+      File.Save(User.Home &/ "/.config/flatdrake/themes", "BreezeDark")   
+      FMain.$THEMES = "BreezeDark"  
+      FMain.$THEMESSUFFIX = "-BD.svg"  
+      FMain.LOADICONS
+   Endif
   Me.Close 
 End
 
@@ -130,5 +154,11 @@ Public Sub BTNESCI_Click()
 
  BTNESCI.Enabled = False
  Me.Close
+
+End
+
+Public Sub Label4_MouseDown()
+
+  
 
 End

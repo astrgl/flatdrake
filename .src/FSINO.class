@@ -4,6 +4,8 @@ Public sStr As String
 Public Sub Form_Open()
 'FMAIN.Enabled = False
 FMAIN.FMAINLOCK
+BTNSI.Picture = Picture.Load(FMAIN.$PATHICONS & "ok" & FMain.$THEMESSUFFIX)
+BTNNO.Picture = Picture.Load(FMAIN.$PATHICONS & "stop" & FMain.$THEMESSUFFIX)
 ' sStr = FMAIN.$sText
 ' 'PULIZIA CARATTERI ERRATI IN CONSOLE******************      
 '     sStr = Replace(sStr, "", "")

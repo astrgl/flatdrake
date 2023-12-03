@@ -5,6 +5,9 @@ Public Sub Form_Open()
   'FMAIN.Enabled = False
   FMAIN.FMAINLOCK
   Timer1.Enabled = True
+  BTNNO.Picture = Picture.Load(FMAIN.$PATHICONS & "ok" & FMain.$THEMESSUFFIX)
+  BTNNO.Picture = Picture.Load(FMAIN.$PATHICONS & "stop" & FMain.$THEMESSUFFIX)
+  
 End
 Public Sub form_Close()
   'FMAIN.Enabled = True

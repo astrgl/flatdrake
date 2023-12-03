@@ -6,12 +6,10 @@
   { BTNSI Button
     MoveScaled(1,55,16,4)
     Text = ("YES")
-    Picture = Picture["icon:/16/apply"]
   }
   { BTNNO Button
     MoveScaled(96,55,16,4)
     Text = ("NO")
-    Picture = Picture["icon:/16/stop"]
   }
   { TextArea1 TextArea
     MoveScaled(1,1,112,53)

@@ -1,19 +1,19 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,64,64)
+  MoveScaled(0,0,64,77)
   Icon = Picture["flatdrake.svg"]
   { LBLTITOLO Label
-    MoveScaled(3,3,57,4)
+    MoveScaled(3,2,57,4)
     Font = Font["+7"]
     Alignment = Align.Center
-    Text = ("FLATDRAKE 2.0.0")
+    Text = ("FlatDrake 2.1.0")
   }
   { BTNCLOSE Button
-    MoveScaled(24,58,16,4)
+    MoveScaled(24,72,16,4)
   }
   { TextArea1 TextArea
-    MoveScaled(6,8,52,49)
+    MoveScaled(6,8,52,63)
     Alignment = Align.Center
   }
 }

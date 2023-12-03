@@ -17,7 +17,7 @@ FMAIN.FMAINLOCK
 TXTSTEP.Text = "Please wait..."
 'FMAIN.Enabled = False
 FMAIN.BTNCOMMAND.Enabled = True
-BTNSTOP.Picture = Picture.Load("/usr/share/flatdrake/stop.png")
+BTNSTOP.Picture = Picture.Load(FMAIN.$PATHICONS & "stop" & FMain.$THEMESSUFFIX)
 'FMAIN.Spinner1.Enabled = True
 End
 Public Sub form_Close()

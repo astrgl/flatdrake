@@ -11,7 +11,7 @@ End
 Public Sub Form_Open()
 ' FMAIN.Enabled = False
  FMAIN.FMAINLOCK
- BTNOK.Picture = Picture.Load("/usr/share/flatdrake/ok.png")
+ BTNOK.Picture = Picture.Load(FMAIN.$PATHICONS & "ok" & FMain.$THEMESSUFFIX)
  If FRUN.Visible = True Then
    FRUN.Close
  Endif

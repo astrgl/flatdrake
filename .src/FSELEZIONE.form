@@ -12,8 +12,7 @@
     #Public = True
   }
   { BTNOK Button
-    MoveScaled(9,36.2857,7.7143,3.4286)
-    Picture = Picture["icon:/16/apply"]
+    MoveScaled(9,36,7.7143,3.4286)
   }
   { TextArea1 TextArea
     MoveScaled(1,2,112,33)
@@ -21,7 +20,6 @@
   }
   { BTNNO Button
     MoveScaled(97,37,16,4)
-    Picture = Picture["icon:/16/stop"]
   }
   { Label2 Label
     MoveScaled(41,37,8,3)

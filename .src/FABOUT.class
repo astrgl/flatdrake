@@ -3,7 +3,7 @@
 Public Sub Form_Open()
 
 'BTNCLOSE.Text = Fmain.Btnclose.Text
-BTNCLOSE.Picture = Picture.Load("/usr/share/flatdrake/close.png")
+BTNCLOSE.Picture = Picture.Load(FMAIN.$PATHICONS & "close" & FMain.$THEMESSUFFIX)
 TextArea1.Text = File.Load("/usr/share/flatdrake/flatdrake-ABOUT")
 Fmain.FMAINLOCK
 

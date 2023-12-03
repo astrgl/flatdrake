@@ -2,7 +2,7 @@
 
 Public Sub Form_Open()
   
-  
+  BTNCLOSE.Picture = Picture.Load(FMAIN.$PATHICONS & "esci" & FMain.$THEMESSUFFIX)
   
 End
 

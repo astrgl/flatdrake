@@ -21,6 +21,10 @@ Public $KILL As Integer
 Public $COLORTEXT As String
 Public $BTNRESOLUTION_TOOLTIP_MAXIM As String
 Public $BTNRESOLUTION_TOOLTIP_RESIZE As String
+Public $THEMES As String            'TEMA DELLE ICONE
+Public $THEMESSUFFIX As String      'CODA DEL NOME DELL'ICONA
+Public $PATHICONS As String         'PATH DELLE ICONE
+Public $TEMAASK As String           'TRADUZIONE DOMANDA TEMA
 
 Public Sub Form_Open()
 'TOOLTIP E TESTI*******************************************************************************
@@ -123,28 +127,35 @@ Public Sub Form_Open()
       BTNCONFIG.Tooltip = Replace(ss$TTP[22], "_", " ") 
       $BTNRESOLUTION_TOOLTIP_MAXIM = Replace(ss$TTP[27], "_", " ") 
       $BTNRESOLUTION_TOOLTIP_RESIZE = Replace(ss$TTP[28], "_", " ") 
+      $TEMAASK = Replace(ss$TTP[29], "_", " ")
      Next
    flTTP.Close
-'ICONE PULSANTI**********************************************
-  BTNCLOSE.Picture = Picture.Load("/usr/share/flatdrake/esci.png")
-  BTNUPDATELISTE.Picture = Picture.Load("/usr/share/flatdrake/refresh.png")
-  BTNABOUT.Picture = Picture.Load("/usr/share/flatdrake/info.png")
-  BTNCONFIG.Picture = Picture.Load("/usr/share/flatdrake/config.png")
-  BTNPKGUPDATE.Picture = Picture.Load("/usr/share/flatdrake/updatepkg.png")
-  BTNREMOVE.Picture = Picture.Load("/usr/share/flatdrake/remove.png")
-  BTNINSTALL.Picture = Picture.Load("/usr/share/flatdrake/add.png")
-  BTNSTOP.Picture = Picture.Load("/usr/share/flatdrake/stop.png")
-  BTNRESOLUTION.Picture = Picture.Load("/usr/share/flatdrake/fullscreen.png")
-  $FULLSCREEN = 1
-  BTNTABINSTALLED.Picture = Picture.Load("/usr/share/flatdrake/installed.png")
-  BTNTABAVAILABLE.Picture = Picture.Load("/usr/share/flatdrake/install.png")
-  BTNTABUPDATE.Picture = Picture.Load("/usr/share/flatdrake/update.png")
-  BTNCOMMAND.Picture = Picture.Load("/usr/share/flatdrake/terminal.png")
-  BTNCLEAR.Picture = Picture.Load("/usr/share/flatdrake/clear.png")
-  BTNWRITEPKG.Picture = Picture.Load("/usr/share/flatdrake/textlink.png")
-  TXTCLEARTXTPKG.Picture = Picture.Load("/usr/share/flatdrake/clear.png")
-  BTNCERCA.Picture = Picture.Load("/usr/share/flatdrake/search.png")
-  BTNINFOBROWSER.Picture = Picture.Load("/usr/share/flatdrake/browser.png")
+
+'TEMA DELLE ICONE**************************************************************      
+  If Not Exist(User.Home &/ "/.config/flatdrake/themes") Then 
+     Dim iTEMA As Integer = Message.Question($TEMAASK, "Oxygen", "Breeze", "Breeze Dark")
+      If (iTEMA = 1) Then
+         File.Save(User.Home &/ "/.config/flatdrake/themes", "Oxygen")
+      Else If (iTEMA = 2)
+         File.Save(User.Home &/ "/.config/flatdrake/themes", "Breeze")
+      Else If (iTEMA = 3)
+         File.Save(User.Home &/ "/.config/flatdrake/themes", "BreezeDark")   
+      Endif 
+  Endif
+  $THEMES = File.Load(User.Home &/ "/.config/flatdrake/themes")
+  $THEMES = Replace($THEMES, " ", "")
+  If $THEMES = "Oxygen" Then
+     $THEMESSUFFIX = ".png"
+  Else If $THEMES = "Breeze"
+     $THEMESSUFFIX = "-B.svg"
+  Else If $THEMES = "BreezeDark"
+     $THEMESSUFFIX = "-BD.svg"    
+  Endif
+  If Exist("/usr/share/flatdrake/icons") Then
+       $PATHICONS = "/usr/share/flatdrake/icons/"
+  Else   
+       $PATHICONS = "/usr/share/flatdrake/"       
+  Endif
  'CARICA L'IMMAGINE DELLA DISTRO*****************************
    Shell "lsb_release -d" To $DISTRO
   ' $DISTRO = "OpenMandriva" 'SERVE PER TEST
@@ -195,6 +206,8 @@ Public Sub Form_Open()
    '$KILL = 0
     TIMERUPLISTE.Enabled = True
     $CLOSEPASS = 0
+    $FULLSCREEN = 1
+    LOADICONS
   '******************************************************************************
   
 End
@@ -500,7 +513,6 @@ End
 Public Sub DRAKETRAYUPDATE()
 ' VERIFICA SE È ABILITATA LA NOTIFICA AGGIORNAMENTI CON DRAKETRAY
     If Not Exist(User.Home &/ ".config/autostart/draketray.desktop") And If Not Exist(User.Home &/ ".config/dnfdrake/noautostart") Then
-       Dim $PID As String
        Dim iAnswer As Integer = Message.Question("Update notification is not active. Do you want to enable it from DrakeTray?", "Yes", "No")
        If (iAnswer = 1) Then
          If Not Exist(User.Home &/ ".config/autostart") Then
@@ -803,7 +815,7 @@ Private Sub RESOLUTION()
 
 If $FULLSCREEN = 1 Then
 'BTNRESOLUTION.Picture = Picture["icon:/16/fullscreen"] Then
-   BTNRESOLUTION.Picture = Picture.Load("/usr/share/flatdrake/restore.png")
+   BTNRESOLUTION.Picture = Picture.Load($PATHICONS & "restore" & $THEMESSUFFIX)
    $FULLSCREEN = 0
    BTNRESOLUTION.Tooltip = $BTNRESOLUTION_TOOLTIP_RESIZE
    Fmain.X = 0
@@ -839,7 +851,7 @@ If $FULLSCREEN = 1 Then
    BTNTABAVAILABLE.Y = BTNTABAVAILABLE.Y + ($RISOLUZIONEY - 768)
    BTNTABUPDATE.Y = BTNTABUPDATE.Y + ($RISOLUZIONEY - 768)
 Else 
-  BTNRESOLUTION.Picture = Picture.Load("/usr/share/flatdrake/fullscreen.png")
+  BTNRESOLUTION.Picture = Picture.Load($PATHICONS & "fullscreen" & $THEMESSUFFIX)
   $FULLSCREEN = 1
   BTNRESOLUTION.Tooltip = $BTNRESOLUTION_TOOLTIP_MAXIM
   Fmain.X = 0
@@ -875,6 +887,29 @@ Else
   BTNTABUPDATE.Y = 630
 Endif 
 End
+
+Public Sub LOADICONS()
+  BTNCLOSE.Picture = Picture.Load($PATHICONS & "esci" & $THEMESSUFFIX)
+  BTNUPDATELISTE.Picture = Picture.Load($PATHICONS & "refresh" & $THEMESSUFFIX)
+  BTNABOUT.Picture = Picture.Load($PATHICONS & "info" & $THEMESSUFFIX)
+  BTNCONFIG.Picture = Picture.Load($PATHICONS & "config" & $THEMESSUFFIX)
+  BTNPKGUPDATE.Picture = Picture.Load($PATHICONS & "updatepkg" & $THEMESSUFFIX)
+  BTNREMOVE.Picture = Picture.Load($PATHICONS & "remove" & $THEMESSUFFIX)
+  BTNINSTALL.Picture = Picture.Load($PATHICONS & "add" & $THEMESSUFFIX)
+  BTNSTOP.Picture = Picture.Load($PATHICONS & "stop" & $THEMESSUFFIX)
+  BTNRESOLUTION.Picture = Picture.Load($PATHICONS & "fullscreen" & $THEMESSUFFIX)
+  BTNTABINSTALLED.Picture = Picture.Load($PATHICONS & "installed.png")
+  BTNTABAVAILABLE.Picture = Picture.Load($PATHICONS & "install.png")
+  BTNTABUPDATE.Picture = Picture.Load($PATHICONS & "update.png")
+  BTNCOMMAND.Picture = Picture.Load($PATHICONS & "terminal" & $THEMESSUFFIX)
+  BTNCLEAR.Picture = Picture.Load($PATHICONS & "clear" & $THEMESSUFFIX)
+  BTNWRITEPKG.Picture = Picture.Load($PATHICONS & "textlink" & $THEMESSUFFIX)
+  TXTCLEARTXTPKG.Picture = Picture.Load($PATHICONS & "clear" & $THEMESSUFFIX)
+  BTNCERCA.Picture = Picture.Load($PATHICONS & "search" & $THEMESSUFFIX)
+  BTNINFOBROWSER.Picture = Picture.Load($PATHICONS & "browser" & $THEMESSUFFIX)
+
+End
+
 Public Sub ListpkgINSTALLATI_DblClick()
   Dim s As String
    txtpkg.Text = ""
