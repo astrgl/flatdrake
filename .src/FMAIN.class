@@ -182,7 +182,7 @@ Public Sub Form_Open()
   Shell "xrandr --current |grep '*'" To $RISOLUZIONE
   $RISOLUZIONEX = Val(Str(Right(Left($risoluzione, 7), 4)))
   $RISOLUZIONEY = Val(Str(Right(Left($risoluzione, 12), 4)))
-  RESOLUTION
+  ' RESOLUTION
 
   'CARICA I PARAMETRI DI CONFIG*************************************************
   $COLORTEXT = "NERO"
@@ -208,6 +208,7 @@ Public Sub Form_Open()
     $CLOSEPASS = 0
     $FULLSCREEN = 1
     LOADICONS
+    RESOLUTION
   '******************************************************************************
   
 End

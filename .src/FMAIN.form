@@ -4,6 +4,7 @@
   MoveScaled(0,0,195.1429,100)
   Icon = Picture["flatdrake.svg"]
   Resizable = False
+  AutoResize = True
   { Label1 Label
     MoveScaled(117,1,14.2857,4)
     Border = Border.Plain
