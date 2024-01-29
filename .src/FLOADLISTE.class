@@ -6,6 +6,8 @@ Public $LOADNONINST As String
 Public $LOADAGG As String
 Public $LOADREPO As String
 Public $UPDATEDIPS As String
+Public $CONNECTION As Integer       'STATO CONNESSIONE INTERNET 0=DISCONNESSO 1=CONNESSO
+'Public $MSGCONNECTION As String     'MESSAGGIO DI CONNESSIONE NON DISPONIBILE
 
 Public Sub Form_Open()
 
@@ -18,6 +20,7 @@ Public Sub Form_Open()
      $LOADREPO = "Loading Package in RPM Repo"
      TXTSTATO.Text = $LOADLIST
      BTNSKIP.Picture = Picture.Load(FMAIN.$PATHICONS & "skip" & FMain.$THEMESSUFFIX)
+     CHECKCONNECTION
 End
 Public Sub form_Close()
  ' FMAIN.Enabled = True
@@ -27,7 +30,7 @@ End
 
 
 Public Sub Timer1_Timer()
-
+If $CONNECTION = 1 Then 
   Dim b As Byte
 
     TXTSTATO.Text = $LOADREPO 
@@ -66,11 +69,12 @@ Public Sub Timer1_Timer()
      Endif
      Timer1.Enabled = False
      CHECKUPDATES
+Else 
+  Message.Info("The connection is unaviable, please check it!", " Ok ")
+  BTNSKIP_Click
+Endif   
 
 End
-
-
-
 
 Public Sub TXTSTATO_MouseDown()
 
@@ -113,4 +117,18 @@ Dim ss$UPD As New String[]
       Fmain.BTNCERCA_CLICK
    Endif
  Endif
+End
+Private Sub CHECKCONNECTION()
+Dim sOutput As String
+Dim sTemp As String = "8.8.8.8"  
+   Shell "ping -c1 -w1 8.8.8.8" To sOutput
+  ' Exec ["ping ", "-c1 " "-w1 ", sTemp] To sOutput                                    'Ping the target and store the output in sOutput"
+    If InStr(sOutput, "64 bytes from") Then                                               'If '64 bytes from' exists in sOutput then..
+      $CONNECTION = 1
+     ' Message.Info("CONNESSIONE=" & $CONNECTION, "ok")   
+    Else 
+      $CONNECTION = 0
+     ' Message.Info("CONNESSIONE=" & $CONNECTION, "ok")                                                  
+    End If 
+    
 End
