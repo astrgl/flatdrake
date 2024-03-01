@@ -4,6 +4,10 @@
 Public Sub BTNOK_Click()
   BTNOK.Enabled = False
   FMAIN.TIMERUPLISTE.Enabled = True
+  If FMAIN.Spinner1.Visible = True Then
+     FMAIN.Spinner1.Stop
+     FMAIN.Spinner1.Visible = False
+  Endif
   Me.Close 
 
 End
@@ -14,6 +18,10 @@ Public Sub Form_Open()
  BTNOK.Picture = Picture.Load(FMAIN.$PATHICONS & "ok" & FMain.$THEMESSUFFIX)
  If FRUN.Visible = True Then
    FRUN.Close
+ Endif
+ If FMAIN.Spinner1.Visible = True Then
+     FMAIN.Spinner1.Stop
+     FMAIN.Spinner1.Visible = False
  Endif
 End
 

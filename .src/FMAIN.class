@@ -373,7 +373,9 @@ Public Sub Process_Read()
   If InStr($sText, "already installed") Then
     FOK.Show
   Endif
-
+  If InStr($sText, "Nothing to do.") Then
+    FOK.Show
+  Endif
            
 'FRUN E STEP*************************************************************
   If InStr($sText, "Installing") > 0                    'PROCEDERE AD INSTALLARE
