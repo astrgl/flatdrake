@@ -202,7 +202,7 @@ Public Sub Form_Open()
     TXTPKG.SetFocus
     Cmbtipo.Index = 0
     $CASE = 1 'SOLO PER TESTDA ELIMINARE
-    $NOTPACKAGES = "No FlatPak Found!"'SOLO PER TESTDA ELIMINARE
+    $NOTPACKAGES = "No FlatPak Found!"'SOLO PER TEST DA ELIMINARE
    '$KILL = 0
     TIMERUPLISTE.Enabled = True
     $CLOSEPASS = 0
@@ -892,7 +892,14 @@ Endif
 End
 
 Public Sub LOADICONS()
-  BTNCLOSE.Picture = Picture.Load($PATHICONS & "esci" & $THEMESSUFFIX)
+  'GESTIONE ERRORE PER ASSENZA ICONE A CAUSA DI SPEC ERRATO IN  OPENMANDRIVA ***********
+   Try BTNCLOSE.Picture = Picture.Load($PATHICONS & "esci" & $THEMESSUFFIX)
+   If Error Then
+     $PATHICONS = "/usr/share/flatdrake/"
+     BTNCLOSE.Picture = Picture.Load($PATHICONS & "esci" & $THEMESSUFFIX)
+   Endif
+'**************************************************************************************
+  'BTNCLOSE.Picture = Picture.Load($PATHICONS & "esci" & $THEMESSUFFIX)
   BTNUPDATELISTE.Picture = Picture.Load($PATHICONS & "refresh" & $THEMESSUFFIX)
   BTNABOUT.Picture = Picture.Load($PATHICONS & "info" & $THEMESSUFFIX)
   BTNCONFIG.Picture = Picture.Load($PATHICONS & "config" & $THEMESSUFFIX)
