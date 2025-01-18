@@ -6,7 +6,7 @@ Public Sub Form_Open()
 BTNCLOSE.Picture = Picture.Load(FMAIN.$PATHICONS & "close" & FMain.$THEMESSUFFIX)
 TextArea1.Text = File.Load("/usr/share/flatdrake/flatdrake-ABOUT")
 Fmain.FMAINLOCK
-
+LBLTITOLO.Text = "FlatDrake " & Application.Version
 End
 Public Sub Form_Close()
 

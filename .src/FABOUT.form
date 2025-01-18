@@ -7,7 +7,6 @@
     MoveScaled(3,2,57,4)
     Font = Font["+7"]
     Alignment = Align.Center
-    Text = ("FlatDrake 2.2.0")
   }
   { BTNCLOSE Button
     MoveScaled(24,72,16,4)

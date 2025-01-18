@@ -2,9 +2,9 @@
 Title=FlatDrake
 Startup=FMAIN
 Icon=flatdrake.svg
-Version=2.2.0
+Version=2.3.0
 Component=gb.image
-Component=gb.qt5
+Component=gb.qt6
 Component=gb.form
 Description="FlatDrake è un frontend a FlatPak.\n\nTutto è iniziato partendo dalla base di DnfDrake che parte dal programma di esempio Console per Gambas di Princeton."
 Authors="Autore: Mauro Carbini aka Astragalo\nMail: mauro.carbini@gmail.com"
