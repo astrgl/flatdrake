@@ -46,6 +46,9 @@ Public Sub Form_Open()
    If Not Exist(User.Home &/ ".config/flatdrake/log") Then
       Mkdir User.Home &/ "/.config/flatdrake/log"
    Endif
+   If Not Exist("/tmp/flatdrake/") Then
+      Mkdir "/tmp/flatdrake/"
+   Endif
    If Not Exist(User.Home &/ ".config/flatdrake/config.txt") Then
       File.Save(User.Home &/ "/.config/flatdrake/config.txt", "")
       Dim fl As File
@@ -603,6 +606,9 @@ Private Sub EXITROUTIN()
         Shell "kill " & $PID
         Shell ("rm -f " & User.Home &/ ".config/draketray/locktray") Wait 
       Endif  
+      If Exist(" /tmp/flatdrake/flatsearchtmp") Then
+         Kill " /tmp/flatdrake/flatsearchtmp"          
+      Endif
 End
 
 
@@ -773,8 +779,10 @@ Private Sub CERCAINREPO()
      Dim iAnswer As Integer = Message.Question("It seems that something similar is present in the OpenMandriva repos, what do you want to do?", " Install From Repo ", "Continue with Flat")
      If (iAnswer = 1) Then
        BTNCTRLC_Click
-       Shell "echo " & $PKGINREPO & "> " & User.Home &/ ".config/flatdrake/flatsearchtmp"
-       Shell "dnfdrake.gambas"
+'       Shell "echo " & $PKGINREPO & " > " & User.Home &/ ".config/flatdrake/flatsearchtmp" Wait 
+       Shell "echo " & $PKGINREPO & " > /tmp/flatdrake/flatsearchtmp " Wait 
+       Shell "dnfdrake" 
+       'Shell "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY /home/mauro/dnfdrake.gambas" 'PER TEST
       Else
          Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
         'Stop Event
