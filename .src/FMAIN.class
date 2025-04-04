@@ -213,6 +213,7 @@ Public Sub Form_Open()
     LOADICONS
     RESOLUTION
   '******************************************************************************
+   BTNRESOLUTION_Click
   
 End
 
