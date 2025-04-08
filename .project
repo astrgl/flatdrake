@@ -2,7 +2,7 @@
 Title=FlatDrake
 Startup=FMAIN
 Icon=flatdrake.svg
-Version=2.3.91
+Version=2.4.0
 Component=gb.image
 Component=gb.qt6
 Component=gb.form
@@ -11,5 +11,6 @@ Authors="Autore: Mauro Carbini aka Astragalo\nMail: mauro.carbini@gmail.com"
 TabSize=2
 Translate=1
 Language=en_US
+SourcePath=/home/mauro/Scrivania/tmp
 Vendor=Astragalo
 Packager=1
