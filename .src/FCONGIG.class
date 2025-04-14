@@ -68,16 +68,15 @@ Public Sub Form_Open()
      CMBTHEMES.Index = 2   
   Endif
   
- If Exist(User.Home &/ "/.config/flatdrake/usermode") Then
-    CHKUSERMODE.Value = True
-    $STARTSTATEUSERMODE = 1
- Else    
+ If FMAIN.$USERMODE = 1 
     CHKUSERMODE.Value = False
+    $STARTSTATEUSERMODE = 1
+ Endif
+  If FMAIN.$USERMODE = 0   
+    CHKUSERMODE.Value = True
     $STARTSTATEUSERMODE = 0
  Endif
   FMAIN.FMAINLOCK
-
-
 End
 Public Sub Form_Close()
   
