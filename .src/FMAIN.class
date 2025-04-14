@@ -14,7 +14,9 @@ Public $PKGINSTALL As String
 Public $CLOSEPASS As Integer
 Public $RISOLUZIONE As String
 Public $RISOLUZIONEX As Integer
+Public $RISOLUZIONEXMAX As Integer
 Public $RISOLUZIONEY As Integer
+Public $RISOLUZIONEYMAX As Integer
 Public $FULLSCREEN As Integer
 Public $DISTRO As String
 Public $KILL As Integer
@@ -25,6 +27,7 @@ Public $THEMES As String            'TEMA DELLE ICONE
 Public $THEMESSUFFIX As String      'CODA DEL NOME DELL'ICONA
 Public $PATHICONS As String         'PATH DELLE ICONE
 Public $TEMAASK As String           'TRADUZIONE DOMANDA TEMA
+Public $USERMODE As String          'SERVE A INSTALLARE LE APP NELLA PARTIZIONE UTENTE
 
 Public Sub Form_Open()
 'TOOLTIP E TESTI*******************************************************************************
@@ -38,7 +41,7 @@ Public Sub Form_Open()
  Dim s$CFG As String
  Dim ss$CFG As New String[]
 '***********************************************************************************************  
-  Dim $repo As String
+ 
 'controllo esistenza delle directory del programma********************************************
    If Not Exist(User.Home &/ ".config/flatdrake/") Then
       Mkdir User.Home &/ "/.config/flatdrake/"
@@ -55,15 +58,14 @@ Public Sub Form_Open()
       fl = Open User.Home &/ "/.config/flatdrake/config.txt" For Create
       Print #fl, "NERO"
       fl.Close
-   Endif 
- 'INSTALLA FLATHUB SE NON INSTALLATO*************************************************************
- Shell "flatpak remotes " To $repo
-  If InStr($repo, "flathub") > 0 Then
- Else 
-   Message.Info("FlatHub is not configured and will be added!", "Ok")
-   Shell "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo" Wait 
- Endif
- 'SERVE PER CHIUDERE TUTTE LE FINESTRE DEL PROGRAMMA APERTE ALL'USCITA**************
+   Endif
+   If Not Exist(User.Home &/ "/.config/flatdrake/usermode") Then
+      File.Save(User.Home &/ "/.config/flatdrake/usermode", "1") 
+      Wait 0.2
+   Endif
+  REPOCHECK   
+
+'SERVE PER CHIUDERE TUTTE LE FINESTRE DEL PROGRAMMA APERTE ALL'USCITA**************
     Application.MainWindow = Me
 
  'Avvio il processo*****************************************************************
@@ -161,32 +163,45 @@ Public Sub Form_Open()
   Endif
  'CARICA L'IMMAGINE DELLA DISTRO*****************************
    Shell "lsb_release -d" To $DISTRO
-  ' $DISTRO = "OpenMandriva" 'SERVE PER TEST
+    '$DISTRO = "" 'SERVE PER TEST
   If InStr($DISTRO, "OpenMandriva", 0, gb.IgnoreCase) Then
       PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
      Else 
        ' PictureBox1.Picture = Picture.Load("/home/mauro/flatdrake/OMA.png")
       If InStr($DISTRO, "ROSA", 0, gb.IgnoreCase) Then
          PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")
-         Spinner1.X = 479
-         Spinner1.Y = 315
-         Spinner1.Height = 113
-         Spinner1.Width = 113
+         Spinner1.X = 633
+         Spinner1.Y = 415
+         Spinner1.Height = 45
+         Spinner1.Width = 98
     Else 
          PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/LINUX.png")
-         Spinner1.X = 512
-         Spinner1.Y = 490
-         Spinner1.Height = 90
-         Spinner1.Width = 90
+         Spinner1.X = 633
+         Spinner1.Y = 424
+         Spinner1.Height = 45
+         Spinner1.Width = 98
     Endif
   Endif
   
-  'IMPOSTA LA DIMENSIONE DELLA FINESTRA IN BASE ALLA RISOLUZIONE DELLO SCHERMO
-  Shell "xrandr --current |grep '*'" To $RISOLUZIONE
-  $RISOLUZIONEX = Val(Str(Right(Left($risoluzione, 7), 4)))
-  $RISOLUZIONEY = Val(Str(Right(Left($risoluzione, 12), 4)))
+  'IMPOSTA LA DIMENSIONE DELLA FINESTRA IN BASE ALLA RISOLUZIONE DELLO SCHERMO***VECCHIA GESTIONE******
+  ' Shell "xrandr --current |grep '*'" To $RISOLUZIONE
+  ' $RISOLUZIONEX = Val(Str(Right(Left($risoluzione, 7), 4)))
+  ' $RISOLUZIONEY = Val(Str(Right(Left($risoluzione, 12), 4)))
   ' RESOLUTION
-
+  
+  'IMPOSTA LA DIMENSIONE DELLA FINESTRA IN BASE ALLA RISOLUZIONE DELLO SCHERMO
+   Shell "xrandr --current |grep '*'" To $RISOLUZIONE
+   $RISOLUZIONEX = Val(Str(Right(Left($risoluzione, 7), 4)))
+   $RISOLUZIONEY = Val(Str(Right(Left($risoluzione, 12), 4)))
+   $RISOLUZIONEXMAX = $RISOLUZIONEX
+   $RISOLUZIONEYMAX = $RISOLUZIONEY
+   If Exist(User.Home &/ ".config/flatdrake/memosize") Then
+      LOADSIZE
+   Else  
+      RESOLUTION   
+      BTNRESOLUTION_Click    
+   Endif
+   
   'CARICA I PARAMETRI DI CONFIG*************************************************
   $COLORTEXT = "NERO"
   If Exist(User.Home &/ "/.config/flatdrake/config.txt") Then
@@ -213,11 +228,12 @@ Public Sub Form_Open()
     LOADICONS
     RESOLUTION
   '******************************************************************************
-   BTNRESOLUTION_Click
+  
   
 End
 
 Public Sub Form_Close()
+SAVESIZE
  If $CLOSEPASS = 0 Then
       Dim iAnswer As Integer = Message.Question("Do you really want to exit?", "Yes", "No")
   If (iAnswer = 1) Then
@@ -517,6 +533,33 @@ Private Sub UpdateConsole()
 
   Wend
 End 
+Public Sub REPOCHECK()
+   Dim $repo As String
+   $USERMODE = RTrim$(LTrim$(File.Load(User.Home &/ ".config/flatdrake/usermode")))
+'VERIFICA SE USERMODE È ATTIVO*************************************************************
+      If $USERMODE = 1 Then 
+ 'INSTALLA FLATHUB SE NON INSTALLATO*************************************************************
+         Shell "flatpak remotes " To $repo
+         If InStr($repo, "user") > 0 Then
+         Else 
+            Message.Info("FlatHub as user is not configured and will be added!", "Ok")
+            Shell "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo" Wait 
+         Endif
+      Endif 
+      If $USERMODE = 0 Then
+'INSTALLA FLATHUB SE NON INSTALLATO*************************************************************
+         Shell "flatpak remotes " To $repo
+         If InStr($repo, "system") > 0 Then
+         Else 
+            Message.Info("FlatHub as root is not configured and will be added!", "Ok")
+            Shell "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo" Wait 
+         Endif             
+      Endif
+End
+
+
+
+
 Public Sub DRAKETRAYUPDATE()
 ' VERIFICA SE È ABILITATA LA NOTIFICA AGGIORNAMENTI CON DRAKETRAY
     If Not Exist(User.Home &/ ".config/autostart/draketray.desktop") And If Not Exist(User.Home &/ ".config/dnfdrake/noautostart") Then
@@ -625,12 +668,14 @@ Private Sub TABHIDE()
     ListpkgAVAILABLE.Visible = False
     ListpkgUPGRADE.Visible = False
     LBTIPO.Visible = False
+    LBLBTNINSTALLED.Visible = False
+    LBLBTNAVAILABLE.Visible = False
+    LBLBTNUPDATE.Visible = False
     ' If TXTCOMMAND.Visible = True Then
     '    CORNICE.Visible = False      
     ' Else 
     '    CORNICE.Visible = True
     ' Endif
-
     
 End
 
@@ -731,7 +776,7 @@ Private Sub CERCAINSTALLED()
      BTNTABINSTALLED_Click
      t = Open User.Home &/ ".config/flatdrake/installati.txt"
      For Each s In t.Lines 
-     If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "system") And If RTrim$(LTrim$(txtpkg.Text)) = "" Then
+     If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "system") Or InStr(s, "user") And If RTrim$(LTrim$(txtpkg.Text)) = "" Then
           p = p + ListpkgINSTALLATI.Count
          ' ListpkgINSTALLATI.add(p, s & "     Installed")
           ListpkgINSTALLATI.add(p, s)
@@ -739,7 +784,7 @@ Private Sub CERCAINSTALLED()
               ListpkgINSTALLATI[p].Foreground = &H0038D079
            Endif 
      Else
-          If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "system") And If InStr(s, RTrim$(LTrim$(txtpkg.Text)), 0, gb.IgnoreCase) Then
+          If InStr(s, "x86_64") Or InStr(s, "noarch") Or InStr(s, "znver1") Or InStr(s, "aarch64") Or InStr(s, "i686") Or InStr(s, "system") Or InStr(s, "user") And If InStr(s, RTrim$(LTrim$(txtpkg.Text)), 0, gb.IgnoreCase) Then
              p = p + ListpkgINSTALLATI.Count
              ListpkgINSTALLATI.add(p, s)
               If $COLORTEXT = "COLOR" Then
@@ -785,19 +830,25 @@ Private Sub CERCAINREPO()
        Shell "dnfdrake" 
        'Shell "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY /home/mauro/dnfdrake.gambas" 'PER TEST
       Else
-         Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
+         If $USERMODE = 0 Then
+            Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
+         Else   
+            Print #$hProcess, "flatpak --user install " & $PKGINSTALL & gb.NewLine;
+         Endif
         'Stop Event
       Endif
        
        ' FINSTALFORREPO.Show
         'Message.Info("si", "ok")
      Else   
-         Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
+         If $USERMODE = 0 Then
+            Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
+         Else   
+            Print #$hProcess, "flatpak --user install " & $PKGINSTALL & gb.NewLine;
+         Endif
            'Message.Info("no", "ok")
      Endif
      Me.Mouse = Mouse.Default
-  
-  
 End
 
 Private Sub BTNINSTALVIEW()
@@ -823,15 +874,17 @@ Private Sub BTNALLVIEW()
   btnremove.Enabled = True
   BTNPKGUPDATE.Enabled = True 
 End
-Private Sub RESOLUTION()
+Public Sub RESOLUTION()
 
 If $FULLSCREEN = 1 Then
 'BTNRESOLUTION.Picture = Picture["icon:/16/fullscreen"] Then
    BTNRESOLUTION.Picture = Picture.Load($PATHICONS & "restore" & $THEMESSUFFIX)
    $FULLSCREEN = 0
    BTNRESOLUTION.Tooltip = $BTNRESOLUTION_TOOLTIP_RESIZE
-   Fmain.X = 0
-   Fmain.Y = 0
+   If Not Exist(User.Home &/ ".config/dnfdrake/memosize") Then
+      Fmain.X = 0
+      Fmain.Y = 0
+   Endif
    Fmain.Height = ($RISOLUZIONEY - 70)
    Fmain.Width = ($RISOLUZIONEX)
    Btnclose.X = Btnclose.X + ($RISOLUZIONEX - 1366)
@@ -857,21 +910,26 @@ If $FULLSCREEN = 1 Then
    HBox1.Y = HBox1.Y + ($RISOLUZIONEY - 768)
    Btnclear.X = Btnclear.X + ($RISOLUZIONEX - 1366)
    Btnclear.Y = Btnclear.Y + ($RISOLUZIONEY - 768)
-   BTNWRITEPKG.Y = BTNWRITEPKG.Y + ($RISOLUZIONEY - 768)
-   BTNINFOBROWSER.Y = BTNINFOBROWSER.Y + ($RISOLUZIONEY - 768)
-   BTNTABINSTALLED.Y = BTNTABINSTALLED.Y + ($RISOLUZIONEY - 768)
-   BTNTABAVAILABLE.Y = BTNTABAVAILABLE.Y + ($RISOLUZIONEY - 768)
-   BTNTABUPDATE.Y = BTNTABUPDATE.Y + ($RISOLUZIONEY - 768)
+   BTNRESOLUTION.Y = BTNRESOLUTION.Y + ($RISOLUZIONEY - 768)
+   BTNGEOMETRY.Y = BTNGEOMETRY.Y + ($RISOLUZIONEY - 768)
+   'BTNWRITEPKG.Y = BTNWRITEPKG.Y + ($RISOLUZIONEY - 768)
+   'BTNINFOBROWSER.Y = BTNINFOBROWSER.Y + ($RISOLUZIONEY - 768)
+   'BTNTABINSTALLED.Y = BTNTABINSTALLED.Y + ($RISOLUZIONEY - 768)
+   'BTNTABAVAILABLE.Y = BTNTABAVAILABLE.Y + ($RISOLUZIONEY - 768)
+   'BTNTABUPDATE.Y = BTNTABUPDATE.Y + ($RISOLUZIONEY - 768)
 Else 
   BTNRESOLUTION.Picture = Picture.Load($PATHICONS & "fullscreen" & $THEMESSUFFIX)
   $FULLSCREEN = 1
   BTNRESOLUTION.Tooltip = $BTNRESOLUTION_TOOLTIP_MAXIM
-  Fmain.X = 0
-  Fmain.Y = 0
+  If Not Exist(User.Home &/ ".config/dnfdrake/memosize") Then
+     Fmain.X = 0
+     Fmain.Y = 0
+  Endif
   Fmain.Height = 700
   Fmain.Width = 1366
   Btnclose.X = 1246
   BTNABOUT.X = 1246
+  BTNCONFIG.X = 1246
   BTNUPDATELISTE.X = 1246
   Btncommand.Y = 662
   LBTIPO.X = 623
@@ -892,15 +950,22 @@ Else
   HBox1.Y = 662
   Btnclear.X = 1232
   Btnclear.Y = 662
-  BTNWRITEPKG.Y = 630
-  BTNINFOBROWSER.Y = 630
-  BTNTABINSTALLED.Y = 630
-  BTNTABAVAILABLE.Y = 630
-  BTNTABUPDATE.Y = 630
+  BTNRESOLUTION.Y = 630
+  BTNGEOMETRY.Y = 630
+  ' $RISOLUZIONEX = $RISOLUZIONEXMAX
+  ' $RISOLUZIONEY = $RISOLUZIONEYMAX
+  'BTNWRITEPKG.Y = 630
+  'BTNINFOBROWSER.Y = 630
+  'BTNTABINSTALLED.Y = 630
+  'BTNTABAVAILABLE.Y = 630
+  'BTNTABUPDATE.Y = 630
 Endif 
 End
-
+Public Sub SAVESIZE()
+   File.save(User.Home & "/.config/flatdrake/memosize", Fmain.X & " " & Fmain.y & " " & Fmain.Width & " " & (Fmain.Height + 70))
+End
 Public Sub LOADICONS()
+
   'GESTIONE ERRORE PER ASSENZA ICONE A CAUSA DI SPEC ERRATO IN  OPENMANDRIVA ***********
    Try BTNCLOSE.Picture = Picture.Load($PATHICONS & "esci" & $THEMESSUFFIX)
    If Error Then
@@ -926,6 +991,46 @@ Public Sub LOADICONS()
   TXTCLEARTXTPKG.Picture = Picture.Load($PATHICONS & "clear" & $THEMESSUFFIX)
   BTNCERCA.Picture = Picture.Load($PATHICONS & "search" & $THEMESSUFFIX)
   BTNINFOBROWSER.Picture = Picture.Load($PATHICONS & "browser" & $THEMESSUFFIX)
+  BTNGEOMETRY.Picture = Picture.Load($PATHICONS & "measure" & $THEMESSUFFIX)
+
+End
+
+Public Sub LOADSIZE()
+ Dim flSIZE As File 
+ Dim jSIZE As Byte 
+ Dim s$SIZE As String
+ Dim ss$SIZE As New String[]
+ flSIZE = Open User.Home &/ ".config/flatdrake/memosize" For Read
+ While Not Eof(flSIZE)
+   Input #flSIZE, s$SIZE
+   ss$SIZE.Add(s$SIZE)
+  Wend
+  Close #flSIZE
+  For jSIZE = 0 To ss$SIZE.Max
+      Fmain.X = Replace(ss$SIZE[0], "_", " ")
+      If Fmain.X < 0 Then
+         Fmain.X = 0 
+      Endif
+      Fmain.Y = Replace(ss$SIZE[1], "_", " ")
+      $RISOLUZIONEX = Replace(ss$SIZE[2], "_", " ")
+      If $RISOLUZIONEX < 1280 Then
+         $RISOLUZIONEX = 1280 
+      Endif
+      $RISOLUZIONEY = Replace(ss$SIZE[3], "_", " ")
+      If $RISOLUZIONEY < 500 Then
+         $RISOLUZIONEY = 500
+      Endif
+      Next 
+   flSIZE.Close  
+'MISURE ORIZZONTALI
+  Dim $DIFFX As Integer
+  $DIFFX = $RISOLUZIONEXMAX - $RISOLUZIONEX
+  FMAIN.Width = $RISOLUZIONEX
+ 
+'MISURE VERTICALI   
+  Dim $DIFFY As Integer
+  $DIFFY = $RISOLUZIONEYMAX - $RISOLUZIONEY
+  FMAIN.Height = $RISOLUZIONEY - 70
 
 End
 
@@ -1162,8 +1267,11 @@ Public Sub BTNCERCA_Click()
   If CMBTIPO.Index = 0 Then
      Btnclear_Click
      BTNTABINSTALLED.Visible = True
+     LBLBTNINSTALLED.Visible = True
      BTNTABAVAILABLE.Visible = True
+     LBLBTNAVAILABLE.Visible = True
      BTNTABUPDATE.Visible = True
+     LBLBTNUPDATE.Visible = True
      BTNINFOBROWSER.Visible = True
     ' BTNSELECTALL.Visible = True
     ' BTNUNSELECTALL.Visible = True
@@ -1397,6 +1505,7 @@ End
 
 Public Sub BTNREPAIR_Click()
 End
+
 Public Sub BTNINFOBROWSER_Click()
     Dim a As String
     Dim s As String
@@ -1440,8 +1549,15 @@ Public Sub BTNINFOBROWSER_Click()
 End
 
 
+
 Public Sub BTNCONFIG_Click()
 
   FCONGIG.Show
+
+End
+
+Public Sub BTNGEOMETRY_Click()
+
+  FGEOMETRY.Show
 
 End

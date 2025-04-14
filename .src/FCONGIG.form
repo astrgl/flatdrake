@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0.1429,0.1429,64,46)
+  MoveScaled(0.1429,0.1429,64,60)
   Icon = Picture["flatdrake.svg"]
   { LBLDRAKETRAY Label
     MoveScaled(2,22,60,13)
@@ -63,10 +63,10 @@
     Text = ("Run on Startup")
   }
   { BTNAPPLY Button
-    MoveScaled(3,38,16,4)
+    MoveScaled(3,54,16,4)
   }
   { BTNESCI Button
-    MoveScaled(45,38,16,4)
+    MoveScaled(45,54,16,4)
   }
   { LBLDRAKETRAYSTATUS Label
     MoveScaled(17,30,30,3)
@@ -79,5 +79,27 @@
     Background = Color.Transparent
     List = [("Oxygen"), ("Breeze"), ("Breeze Dark")]
     Border = False
+  }
+  { LBLUSERMODE Label
+    MoveScaled(2,42.2857,60,9)
+    Border = Border.Plain
+    BorderRadius = 15
+  }
+  { LBLUSERMODETITOLO Label
+    MoveScaled(15,37,30,4)
+    Alignment = Align.Center
+    Border = Border.Plain
+    BorderRadius = 15
+    Text = ("MOde Config")
+  }
+  { Label5 Label
+    MoveScaled(3,45,28,4)
+    Border = Border.Plain
+    BorderRadius = 10
+  }
+  { CHKUSERMODE CheckBox
+    MoveScaled(4,45,25,4)
+    ToolTip = ("If flagged install the apps  in root partitionn")
+    Text = ("Set install as  root")
   }
 }

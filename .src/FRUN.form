@@ -3,6 +3,7 @@
 { Form Form
   MoveScaled(0,0,79,10)
   Icon = Picture["flatdrake.svg"]
+  Opacity = 95
   { BTNSTOP Button
     MoveScaled(71,3.5714,5.7143,3.4286)
     Picture = Picture["icon:/16/stop"]

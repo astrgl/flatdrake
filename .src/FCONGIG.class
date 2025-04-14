@@ -1,5 +1,7 @@
 ' Gambas class file
 
+Private $STARTSTATEUSERMODE As Integer
+
 ' Gambas class file
 Private $LOCK As String
 Public $CONFIGDRAKETRAY As Integer
@@ -66,7 +68,13 @@ Public Sub Form_Open()
      CMBTHEMES.Index = 2   
   Endif
   
-
+ If Exist(User.Home &/ "/.config/flatdrake/usermode") Then
+    CHKUSERMODE.Value = True
+    $STARTSTATEUSERMODE = 1
+ Else    
+    CHKUSERMODE.Value = False
+    $STARTSTATEUSERMODE = 0
+ Endif
   FMAIN.FMAINLOCK
 
 
@@ -146,6 +154,25 @@ Public Sub BTNAPPLY_Click()
       FMain.$THEMES = "BreezeDark"  
       FMain.$THEMESSUFFIX = "-BD.svg"  
       FMain.LOADICONS
+   Endif
+   
+   'USERMODE******************************************************************************
+   If CHKUSERMODE.Value = True Then
+      File.Save(User.Home &/ "/.config/flatdrake/usermode", "0") 
+      Wait 0.2
+      FMAIN.REPOCHECK
+      FMAIN.$USERMODE = 0
+      If $STARTSTATEUSERMODE = 1 Then
+         FMAIN.TIMERUPLISTE.Enabled = True
+      Endif    
+   Else 
+      File.Save(User.Home &/ "/.config/flatdrake/usermode", "1") 
+      Wait 0.2
+      FMAIN.REPOCHECK
+      FMAIN.$USERMODE = 1
+      If $STARTSTATEUSERMODE = 0 Then
+         FMAIN.TIMERUPLISTE.Enabled = True
+      Endif    
    Endif
   Me.Close 
 End

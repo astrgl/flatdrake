@@ -10,8 +10,33 @@
     Border = Border.Plain
     BorderRadius = 10
   }
-  { CORNICE Label
+  { LBLBTNINSTALLED Label
+    MoveScaled(12.7143,16,5.7143,4.5714)
+    Visible = False
+    Border = Border.Plain
+    BorderWidth = 2
+    BorderRadius = 5
+    BorderColor = &H28984D
+  }
+  { LBLBTNAVAILABLE Label
+    MoveScaled(18.7143,16,5.7143,4.5714)
+    Visible = False
+    Border = Border.Plain
+    BorderWidth = 2
+    BorderRadius = 5
+    BorderColor = &HE0703E
+  }
+  { LBLBTNUPDATE Label
+    MoveScaled(24.7143,16,5.7143,4.5714)
+    Visible = False
+    Border = Border.Plain
+    BorderWidth = 2
+    BorderRadius = 5
+    BorderColor = &H257DD0
+  }
+  { !CORNICE Label
     MoveScaled(1,20,191,70)
+    #Public = True
     Border = Border.Plain
     BorderRadius = 8
   }
@@ -24,22 +49,26 @@
     #Public = True
     Text = ("Debug") & "..."
   }
-  { HBox1 HBox
+  { !HBox1 HBox
     MoveScaled(17,94.5714,100,4)
+    #Public = True
     Visible = False
-    { TXTCOMMAND TextBox
+    { !TXTCOMMAND TextBox
       MoveScaled(0,0,23,4)
+      #Public = True
       Visible = False
       Font = Font["Courier 10 Pitch"]
       Expand = True
     }
-    { BTNCTRLC Button
+    { !BTNCTRLC Button
       MoveScaled(82,0,9,4)
+      #Public = True
       Visible = False
       Text = ("CTRL-C")
     }
-    { BTNCTRLZ Button
+    { !BTNCTRLZ Button
       MoveScaled(91,0,9,4)
+      #Public = True
       Visible = False
       Text = ("CTRL-Z")
     }
@@ -50,13 +79,16 @@
     Visible = False
     Font = Font["Monospace"]
   }
-  { PictureBox1 PictureBox
+  { !PictureBox1 PictureBox
     MoveScaled(1.8571,21,189.2857,68)
+    #Public = True
     Background = Color.Background
+    Picture = Picture.Load("OMA.png")
     Alignment = Align.Center
   }
-  { BTNCLEAR Button
+  { !BTNCLEAR Button
     MoveScaled(176,94.5714,15.7143,4)
+    #Public = True
   }
   { TXTPKG TextBox
     MoveScaled(22,1,60,4)
@@ -89,35 +121,41 @@
     Picture = Picture["icon:/16/remove"]
   }
   { BTNWRITEPKG Button
-    MoveScaled(1,90,5,4)
+    MoveScaled(1,16,5,4)
     Visible = False
   }
   { BTNTABINSTALLED Button
-    MoveScaled(13,90,5,4)
+    MoveScaled(13,16,5,4)
     Visible = False
+    Border = False
   }
   { BTNTABAVAILABLE Button
-    MoveScaled(18,90,5,4)
+    MoveScaled(19,16,5,4)
     Visible = False
+    Border = False
   }
   { BTNTABUPDATE Button
-    MoveScaled(23,90,5,4)
+    MoveScaled(25,16,5,4)
     Visible = False
+    Border = False
   }
-  { LISTPKGINSTALLATI ListView
+  { !LISTPKGINSTALLATI ListView
     MoveScaled(1.8571,21,189.2857,68)
+    #Public = True
     Visible = False
     Font = Font["Monospace"]
     ShowCheck = True
   }
-  { LISTPKGAVAILABLE ListView
+  { !LISTPKGAVAILABLE ListView
     MoveScaled(1.8571,21,189.2857,68)
+    #Public = True
     Visible = False
     Font = Font["Monospace"]
     ShowCheck = True
   }
-  { LISTPKGUPGRADE ListView
+  { !LISTPKGUPGRADE ListView
     MoveScaled(2,21,189.2857,68)
+    #Public = True
     Visible = False
     Font = Font["Monospace"]
     ShowCheck = True
@@ -136,8 +174,9 @@
     #Public = True
     Delay = 1500
   }
-  { BTNUPDATELISTE Button
+  { !BTNUPDATELISTE Button
     MoveScaled(178,6,14.2857,4)
+    #Public = True
   }
   { LBTIPO Label
     MoveScaled(89,16,14.2857,3.4286)
@@ -145,13 +184,15 @@
     Font = Font["Monospace,Bold"]
     Alignment = Align.Center
     Border = Border.Plain
+    BorderWidth = 2
     BorderRadius = 10
   }
-  { BTNABOUT Button
+  { !BTNABOUT Button
     MoveScaled(178,11,14.2857,4)
+    #Public = True
   }
   { !Spinner1 Spinner
-    MoveScaled(52.4286,50.8571,14,6.4286)
+    MoveScaled(52.4286,51,14,6.4286)
     #Public = True
     Type = Spinner.Dot
   }
@@ -162,7 +203,7 @@
     Picture = Picture["icon:/16/server"]
   }
   { BTNINFOBROWSER Button
-    MoveScaled(6,90,5,4)
+    MoveScaled(6,16,5,4)
     Visible = False
   }
   { CHKALLUPDATE CheckBox
@@ -170,20 +211,21 @@
     Text = ("All")
     Value = CheckBox.True
   }
-  { BTNRESOLUTION Button
-    MoveScaled(1,16,5,4)
+  { !BTNRESOLUTION Button
+    MoveScaled(1,90,5,4)
+    #Public = True
   }
   { BTNREPAIR Button
     MoveScaled(130,12,14.2857,4)
     Visible = False
     Picture = Picture["icon:/16/refresh"]
   }
-  { BTNCONFIG Button
+  { !BTNCONFIG Button
     MoveScaled(178,16,14.2857,4)
+    #Public = True
   }
-  { Label2 Label
-    MoveScaled(35,16,8,3)
-    Visible = False
-    Border = Border.Sunken
+  { !BTNGEOMETRY Button
+    MoveScaled(6,90,5,4)
+    #Public = True
   }
 }

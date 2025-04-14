@@ -1,0 +1,153 @@
+' Gambas class file
+
+Public Sub Form_Open()
+  Dim $SESSION As String
+  Fmain.Enabled = False
+  $SESSION = Desktop.Platform
+  If RTrim(Replace($SESSION, "\n", " ")) = "x11" Then
+    SPBXX.Enabled = True
+    SPBXY.Enabled = True  
+  Else 
+  LBLDESCRIZIONE2.Tooltip = "This function not work with wayland :-(" 
+  SPBXX.Tooltip = LBLDESCRIZIONE2.Tooltip
+  SPBXY.Tooltip = LBLDESCRIZIONE2.Tooltip
+  Endif
+  BTNEXIT.Picture = Fmain.Btnclose.Picture
+  BTNEXIT.Tooltip = Fmain.Btnclose.Tooltip
+  BTNMAXSCREEN.Picture = Picture.Load(FMAIN.$PATHICONS & "fullscreen" & FMAIN.$THEMESSUFFIX)
+  BTNSTDSCREEN.Picture = Picture.Load(FMAIN.$PATHICONS & "restore" & FMAIN.$THEMESSUFFIX)
+  SPBXWIDTH.MaxValue = Fmain.$RISOLUZIONEXMAX
+  SPBXHEIGHT.MaxValue = Fmain.$RISOLUZIONEYMAX
+  SPBXWIDTH.Value = Fmain.Width
+  SPBXHEIGHT.Value = Fmain.Height + 70
+  SPBXX.MaxValue = Fmain.$RISOLUZIONEXMAX - SPBXWIDTH.Value
+  SPBXY.MaxValue = Fmain.$RISOLUZIONEYMAX - SPBXHEIGHT.Value
+  SPBXX.Value = Fmain.X
+  SPBXY.Value = Fmain.Y
+  
+End
+Public Sub FORM_Close()
+  Fmain.Enabled = True
+End
+
+Public Sub BTNEXIT_Click()
+  BTNEXIT.Enabled = False
+  Me.Close
+
+End
+
+Public Sub SPBXWIDTH_Change()
+  Dim $DIFFX As Integer
+  $DIFFX = SPBXWIDTH.Value - FMAIN.$RISOLUZIONEX
+  FMAIN.Width = SPBXWIDTH.Value
+  FMAIN.BTNCLOSE.X = FMAIN.BTNCLOSE.X + $DIFFX
+  FMAIN.BTNUPDATELISTE.X = FMAIN.BTNUPDATELISTE.X + $DIFFX
+  FMAIN.BTNABOUT.X = FMAIN.BTNABOUT.X + $DIFFX
+  FMAIN.BTNCONFIG.X = FMAIN.BTNCONFIG.X + $DIFFX
+  FMAIN.BTNCLEAR.X = FMAIN.BTNCLEAR.X + $DIFFX
+  FMAIN.CORNICE.Width = FMAIN.CORNICE.Width + $DIFFX
+  FMAIN.LISTPKGINSTALLATI.Width = FMAIN.LISTPKGINSTALLATI.Width + $DIFFX
+  FMAIN.LISTPKGAVAILABLE.Width = FMAIN.LISTPKGAVAILABLE.Width + $DIFFX
+  FMAIN.LISTPKGUPGRADE.Width = FMAIN.LISTPKGUPGRADE.Width + $DIFFX
+  FMAIN.TXTCONSOLE.Width = FMAIN.TXTCONSOLE.Width + $DIFFX
+  FMAIN.PictureBox1.Width = FMAIN.PictureBox1.Width + $DIFFX
+  
+  If InStr(FMAIN.$DISTRO, "OpenMandriva", 0, gb.IgnoreCase) Then
+     FMAIN.Spinner1.X = FMAIN.PictureBox1.Width / 2 - 295
+  Else 
+      If InStr(FMAIN.$DISTRO, "ROSA", 0, gb.IgnoreCase) Then
+         FMAIN.Spinner1.X = FMAIN.PictureBox1.Width / 2 - 30
+    Else 
+         FMAIN.Spinner1.X = FMAIN.PictureBox1.Width / 2 - 30
+    Endif
+  Endif
+  
+  Fmain.$RISOLUZIONEX = SPBXWIDTH.Value 
+  If SPBXWIDTH.Value = FMAIN.$RISOLUZIONEXMAX And If SPBXHEIGHT.Value = FMAIN.$RISOLUZIONEYMAX Then
+     FMAIN.$FULLSCREEN = 1
+     FMAIN.BTNRESOLUTION.Picture = Picture.Load(FMAIN.$PATHICONS & "fullscreen" & FMAIN.$THEMESSUFFIX)
+     FMAIN.BTNRESOLUTION.Tooltip = FMAIN.$BTNRESOLUTION_TOOLTIP_MAXIM
+  Else 
+     FMAIN.$FULLSCREEN = 0
+     FMAIN.BTNRESOLUTION.Picture = Picture.Load(FMAIN.$PATHICONS & "restore" & FMAIN.$THEMESSUFFIX)
+     FMAIN.BTNRESOLUTION.Tooltip = FMAIN.$BTNRESOLUTION_TOOLTIP_RESIZE
+  Endif
+
+End
+
+Public Sub SPBXHEIGHT_Change()
+ 
+  Dim $DIFFY As Integer
+  $DIFFY = SPBXHEIGHT.Value - FMAIN.$RISOLUZIONEY
+  FMAIN.Height = SPBXHEIGHT.Value - 70
+  FMAIN.BTNCLEAR.Y = FMAIN.BTNCLEAR.Y + $DIFFY
+  FMAIN.BTNRESOLUTION.Y = FMAIN.BTNRESOLUTION.Y + $DIFFY  
+  FMAIN.BTNCOMMAND.Y = FMAIN.BTNCOMMAND.Y + $DIFFY 
+  FMAIN.BTNCTRLC.Y = FMAIN.BTNCTRLC.Y + $DIFFY
+  FMAIN.BTNCTRLZ.Y = FMAIN.BTNCTRLZ.Y + $DIFFY
+  FMAIN.HBox1.Y = FMAIN.HBox1.Y + $DIFFY
+  FMAIN.TXTCOMMAND.Y = FMAIN.HBox1.Y + $DIFFY
+  FMAIN.BTNGEOMETRY.Y = FMAIN.BTNGEOMETRY.Y + $DIFFY
+  FMAIN.CORNICE.Height = FMAIN.CORNICE.Height + $DIFFY
+  FMAIN.LISTPKGINSTALLATI.Height = FMAIN.LISTPKGINSTALLATI.Height + $DIFFY
+  FMAIN.LISTPKGAVAILABLE.Height = FMAIN.LISTPKGAVAILABLE.Height + $DIFFY
+  FMAIN.LISTPKGUPGRADE.Height = FMAIN.LISTPKGUPGRADE.Height + $DIFFY
+  FMAIN.TXTCONSOLE.Height = FMAIN.TXTCONSOLE.Height + $DIFFY
+  FMAIN.PictureBox1.Height = FMAIN.PictureBox1.Height + $DIFFY
+  
+  If InStr(FMAIN.$DISTRO, "OpenMandriva", 0, gb.IgnoreCase) Then
+      FMAIN.Spinner1.Y = (FMAIN.PictureBox1.Height / 2) + 119
+     Else 
+      If InStr(FMAIN.$DISTRO, "ROSA", 0, gb.IgnoreCase) Then
+         FMAIN.Spinner1.Y = (FMAIN.PictureBox1.Height / 2) + 180
+    Else 
+         FMAIN.Spinner1.Y = (FMAIN.PictureBox1.Height / 2) + 186
+    Endif
+  Endif   
+  
+  Fmain.$RISOLUZIONEY = SPBXHEIGHT.Value 
+  If SPBXWIDTH.Value = FMAIN.$RISOLUZIONEXMAX And If SPBXHEIGHT.Value = FMAIN.$RISOLUZIONEYMAX Then
+     FMAIN.$FULLSCREEN = 1
+     FMAIN.BTNRESOLUTION.Picture = Picture.Load(FMAIN.$PATHICONS & "fullscreen" & FMAIN.$THEMESSUFFIX)
+     FMAIN.BTNRESOLUTION.Tooltip = FMAIN.$BTNRESOLUTION_TOOLTIP_MAXIM
+  Else 
+     FMAIN.$FULLSCREEN = 0
+     FMAIN.BTNRESOLUTION.Picture = Picture.Load(FMAIN.$PATHICONS & "restore" & FMAIN.$THEMESSUFFIX)
+     FMAIN.BTNRESOLUTION.Tooltip = FMAIN.$BTNRESOLUTION_TOOLTIP_RESIZE       
+  Endif
+
+End
+
+Public Sub SPBXX_Change()
+ Fmain.X = SPBXX.Value
+
+End
+
+Public Sub SPBXY_Change()
+Fmain.Y = SPBXY.Value
+  
+
+End
+
+Public Sub BTNMAXSCREEN_Click()
+
+  Fmain.X = 0
+  Fmain.Y = 0
+  SPBXWIDTH.Value = FMAIN.$RISOLUZIONEXMAX
+  SPBXHEIGHT.Value = FMAIN.$RISOLUZIONEYMAX
+  FMAIN.$FULLSCREEN = 0
+  FMAIN.BTNRESOLUTION.Picture = Picture.Load(FMAIN.$PATHICONS & "restore" & FMAIN.$THEMESSUFFIX)
+  FMAIN.BTNRESOLUTION.Tooltip = FMAIN.$BTNRESOLUTION_TOOLTIP_RESIZE       
+  
+End
+
+Public Sub BTNSTDSCREEN_Click()
+
+  Fmain.X = 0
+  Fmain.Y = 0
+  SPBXWIDTH.Value = 1366
+  SPBXHEIGHT.Value = 768
+  FMAIN.$FULLSCREEN = 1
+  FMAIN.BTNRESOLUTION.Picture = Picture.Load(FMAIN.$PATHICONS & "fullscreen" & FMAIN.$THEMESSUFFIX)
+  FMAIN.BTNRESOLUTION.Tooltip = FMAIN.$BTNRESOLUTION_TOOLTIP_MAXIM
+End
