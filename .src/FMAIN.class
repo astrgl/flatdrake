@@ -163,22 +163,23 @@ Public Sub Form_Open()
   Endif
  'CARICA L'IMMAGINE DELLA DISTRO*****************************
    Shell "lsb_release -d" To $DISTRO
-    '$DISTRO = "" 'SERVE PER TEST
+    '$DISTRO = "ROSA" 'SERVE PER TEST
   If InStr($DISTRO, "OpenMandriva", 0, gb.IgnoreCase) Then
       ' PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
       If $THEMES = "Oxygen" Or If $THEMES = "Breeze" Then
-            PictureBox1.Picture = Picture.Load("/usr/share/dnfdrake/OMA.png")
+            PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
          Else If $THEMES = "BreezeDark"
-            PictureBox1.Picture = Picture.Load("/usr/share/dnfdrake/OMA-BD.png")   
+            PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA-BD.png")  
+            'PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
          Endif
      Else 
        ' PictureBox1.Picture = Picture.Load("/home/mauro/flatdrake/OMA.png")
       If InStr($DISTRO, "ROSA", 0, gb.IgnoreCase) Then
          ' PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")
          If $THEMES = "Oxygen" Or If $THEMES = "Breeze" Then
-            PictureBox1.Picture = Picture.Load("/usr/share/dnfdrake/ROSA.png")   
+            PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")   
          Else If $THEMES = "BreezeDark"
-            PictureBox1.Picture = Picture.Load("/usr/share/dnfdrake/ROSA-BD.png")   
+            PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA-BD.png")   
          Endif
          Spinner1.X = 633
          Spinner1.Y = 415
