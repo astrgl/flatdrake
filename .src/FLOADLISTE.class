@@ -97,8 +97,8 @@ Dim jUPD As Byte
 Dim s$UPD As String
 Dim ss$UPD As New String[]
 
- If Exist(User.Home &/ ".config/draketray/locktray") Then
-    flUPD = Open User.Home &/ ".config/draketray/locktray" For Read 
+ If Exist("/tmp/draketray/locktray") Then
+    flUPD = Open "/tmp/draketray/locktray" For Read 
     While Not Eof(flUPD)
       Input #flUPD, s$UPD
       ss$UPD.Add(s$UPD)
@@ -112,7 +112,7 @@ Dim ss$UPD As New String[]
    flUPD.Close
    
    If $UPDATEDIPS = 2 Then
-      File.Save(User.Home &/ "/.config/draketray/locktray", "0")
+      File.Save("/tmp/draketray/locktray", "0")
       FMAIN.CMBTIPO.index = 3
       Fmain.BTNCERCA_CLICK
    Endif

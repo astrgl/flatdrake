@@ -94,7 +94,7 @@
     MoveScaled(22,1,60,4)
   }
   { TXTCLEARTXTPKG Button
-    MoveScaled(81.7143,1,4.4286,4)
+    MoveScaled(82.1429,1,4.4286,4)
   }
   { BTNINSTALL Button
     MoveScaled(87,1,14.2857,4)
