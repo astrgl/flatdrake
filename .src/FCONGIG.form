@@ -90,7 +90,7 @@
     Alignment = Align.Center
     Border = Border.Plain
     BorderRadius = 15
-    Text = ("MOde Config")
+    Text = ("Mode Config")
   }
   { Label5 Label
     MoveScaled(3,45,28,4)
