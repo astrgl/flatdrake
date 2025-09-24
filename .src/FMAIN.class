@@ -814,6 +814,12 @@ Private Sub CERCAINSTALLED()
           ListpkgINSTALLATI[1].Foreground = &H0038D079
        Endif
        ListpkgINSTALLATI.Enabled = False
+       BTNTABAVAILABLE.SetFocus
+       BTNTABAVAILABLE_Click
+     Else 
+       BTNTABINSTALLED.SetFocus
+       BTNTABINSTALLED_Click
+  
      Endif
      t.Close
      Me.Mouse = Mouse.Default
@@ -1225,6 +1231,7 @@ Public Sub BTNPKGUPDATE_Click()
 End
 Public Sub TXTCLEARTXTPKG_Click()
   TXTPKG.Text = ""
+  CMBTIPO.Index = 0
 End
 
 Public Sub BTNSTOP_Click()
@@ -1296,8 +1303,8 @@ Public Sub BTNCERCA_Click()
      Me.Mouse = Mouse.Wait  
      CERCAINSTALLED
     ' BTNINSTALVIEW
-     BTNTABINSTALLED.SetFocus
-     BTNTABINSTALLED_Click
+     ' BTNTABINSTALLED.SetFocus
+     ' BTNTABINSTALLED_Click
   Endif
   If CMBTIPO.Index = 1 Then 
       Btnclear_Click

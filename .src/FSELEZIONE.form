@@ -3,6 +3,7 @@
 { Form Form
   MoveScaled(0,0,114,42)
   Icon = Picture["flatdrake.svg"]
+  Opacity = 95
   { Label1 Label
     MoveScaled(1,36,16,4)
     Border = Border.Plain

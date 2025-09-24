@@ -91,10 +91,10 @@
     #Public = True
   }
   { TXTPKG TextBox
-    MoveScaled(22,1,60,4)
+    MoveScaled(16,1,55,4)
   }
   { TXTCLEARTXTPKG Button
-    MoveScaled(82.1429,1,4.4286,4)
+    MoveScaled(71,1,7.1429,4)
   }
   { BTNINSTALL Button
     MoveScaled(87,1,14.2857,4)
@@ -166,7 +166,7 @@
     List = [("All"), ("Installed"), ("Available"), ("Update"), ("Repository")]
   }
   { !BTNCERCA Button
-    MoveScaled(16,1,6,4)
+    MoveScaled(78,1,7.1429,4)
     #Public = True
   }
   { !TIMERUPLISTE #Timer

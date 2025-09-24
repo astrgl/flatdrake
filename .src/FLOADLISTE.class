@@ -20,6 +20,8 @@ Public Sub Form_Open()
      $LOADREPO = "Loading Package in RPM Repo"
      TXTSTATO.Text = $LOADLIST
      BTNSKIP.Picture = Picture.Load(FMAIN.$PATHICONS & "skip" & FMain.$THEMESSUFFIX)
+     CHECKUPDATES  ' MODIFICA PER NON CARCARE LE LISTE
+     
      CHECKCONNECTION
 End
 Public Sub form_Close()
@@ -68,7 +70,7 @@ If $CONNECTION = 1 Then
        Me.Close
      Endif
      Timer1.Enabled = False
-     CHECKUPDATES
+    ' CHECKUPDATES SPOSTATO IN FORM_OPEN
 Else 
   Message.Info("The connection is unaviable, please check it!", " Ok ")
   BTNSKIP_Click
@@ -112,6 +114,8 @@ Dim ss$UPD As New String[]
    flUPD.Close
    
    If $UPDATEDIPS = 2 Then
+      Timer1.Enabled = False    'EVITA DI RICARICARE LE LISTE SE DRAKETRAY RILEVA AGGIORNAMENTI
+      Me.Close                  'EVITA DI RICARICARE LE LISTE SE DRAKETRAY RILEVA AGGIORNAMENTI
       File.Save("/tmp/draketray/locktray", "0")
       FMAIN.CMBTIPO.index = 3
       Fmain.BTNCERCA_CLICK

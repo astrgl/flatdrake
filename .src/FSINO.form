@@ -3,6 +3,7 @@
 { Form Form
   MoveScaled(0,0,114,60)
   Icon = Picture["flatdrake.svg"]
+  Opacity = 95
   { BTNSI Button
     MoveScaled(1,55,16,4)
     Text = ("YES")
