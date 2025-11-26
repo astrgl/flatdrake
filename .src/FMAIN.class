@@ -5,8 +5,10 @@ Public $sText As String
 Public $DNFDRAKEASK As String
 Public $CASE As Integer
 Public $NOTPACKAGES As String
-Public $PROGRESS As Integer
-Public $TOT As Integer
+'Public $PROGRESS As Integer
+Public $PROGRESS As String
+'Public $TOT As Integer
+Public $TOT As String
 Public $SELEZIONE As Integer
 Public $PKGINREPO As String
 Public $PKGREPO As String[]
@@ -156,11 +158,11 @@ Public Sub Form_Open()
   Else If $THEMES = "BreezeDark"
      $THEMESSUFFIX = "-BD.svg"    
   Endif
-  If Exist("/usr/share/flatdrake/icons") Then
-       $PATHICONS = "/usr/share/flatdrake/icons/"
-  Else   
+  ' If Exist("/usr/share/flatdrake/icons") Then 
+  '      $PATHICONS = "/usr/share/flatdrake/icons/"  'PATH NON PIÙ USATO DALLA DISTRO
+  ' Else   
        $PATHICONS = "/usr/share/flatdrake/"       
-  Endif
+  ' Endif
  'CARICA L'IMMAGINE DELLA DISTRO*****************************
    Shell "lsb_release -d" To $DISTRO
     '$DISTRO = "ROSA" 'SERVE PER TEST
@@ -412,40 +414,50 @@ Public Sub Process_Read()
            
 'FRUN E STEP*************************************************************
   If InStr($sText, "Installing") > 0                    'PROCEDERE AD INSTALLARE
-    '       If $SECUREMODE = "SECURE" Then
-    '         FSINOSECURE.Show
-    '       Else 
-    
-    
-           ' Label2.Text = Len(sStr)
-            
-
              If FRUN.Visible = False
-             Try $TOT = Right(Left(sStr, 15), 1)
-               If Error Then 
-                 $TOT = 1
+             'Try $TOT = Right(Left(sStr, 15), 1) ' STRINGA OK SINO A 9 STEP
+             Try $TOT = Right(Left(sStr, 16), 2)
+               If Error Then
+                  $TOT = 1
                Endif
+                If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
+                   $TOT = Left($TOT, 1)                     
+                Endif
              FRUN.Show    
              Endif 
-             Try $PROGRESS = Right(Left(sStr, 13), 1)
+              'Try $PROGRESS = Right(Left(sStr, 13), 1) ' STRINGA OK SINO A 9 STEP
+               Try $PROGRESS = Right(Left(sStr, 14), 2)
                 If Error Then 
-                  $PROGRESS = 1
+                  ' FRUN.BTNSTOP_Click
+                  ' Message.Info("ERRORE PROG", "OK") 
+                   $PROGRESS = 1
                 Endif
+                 If Right($PROGRESS, 1) = "/" Then
+                    $PROGRESS = Left($PROGRESS, 1)
+                 Endif
              FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of  " & $TOT
-             
            Endif
+           
   If InStr($sText, "Updating") > 0 Then 
      If FRUN.Visible = False
-             Try $TOT = Right(Left(sStr, 13), 1)
-               If Error Then 
+             ' Try $TOT = Right(Left(sStr, 13), 1) ' STRINGA OK SINO A 9 STEP
+             Try $TOT = Right(Left(sStr, 14), 2)
+             If Error Then 
                  $TOT = 1
                Endif
+             If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
+                   $TOT = Left($TOT, 1)                     
+             Endif
              FRUN.Show    
              Endif 
-             Try $PROGRESS = Right(Left(sStr, 11), 1)
+             ' Try $PROGRESS = Right(Left(sStr, 11), 1) ' STRINGA OK SINO A 9 STEP
+             Try $PROGRESS = Right(Left(sStr, 12), 2)
                 If Error Then 
                   $PROGRESS = 1
                 Endif
+              If Right($PROGRESS, 1) = "/" Then
+                    $PROGRESS = Left($PROGRESS, 1)
+              Endif
              FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of " & $TOT
   Endif
            
@@ -534,13 +546,13 @@ Private Sub UpdateConsole()
     txtConsole.Pos = txtConsole.Length
     
 'PULIZIA CARATTERI ERRATI IN CONSOLE******************      
-    sStr = Replace(sStr, "", "")
-    sStr = Replace(sStr, "[1m", "")
-    sStr = Replace(sStr, "[22m", "")
-    sStr = Replace(sStr, "[6n", "")
-    sStr = Replace(sStr, "[2m", "")
-    sStr = Replace(sStr, "[?25l", "")
-    sStr = Replace(sStr, "[?25h", "")
+    ' sStr = Replace(sStr, "", "")
+    ' sStr = Replace(sStr, "[1m", "")
+    ' sStr = Replace(sStr, "[22m", "")
+    ' sStr = Replace(sStr, "[6n", "")
+    ' sStr = Replace(sStr, "[2m", "")
+    ' sStr = Replace(sStr, "[?25l", "")
+    ' sStr = Replace(sStr, "[?25h", "")
 '*****************************************************
     txtConsole.Insert(sStr)
 

@@ -1,19 +1,20 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,79,10)
+  MoveScaled(0,0,96,13)
   Icon = Picture["flatdrake.svg"]
   Opacity = 95
   { BTNSTOP Button
-    MoveScaled(71,3.5714,5.7143,3.4286)
+    MoveScaled(40.1429,7.5714,15.7143,4)
     Picture = Picture["icon:/16/stop"]
   }
   { !ProgressBar2 ProgressBar
-    MoveScaled(2,4,69,2.4286)
+    MoveScaled(2,5,92,1)
     #Public = True
+    Label = False
   }
   { !TXTSTEP Label
-    MoveScaled(2,2,69,2)
+    MoveScaled(0,2,96,3)
     #Public = True
     Alignment = Align.Center
     Text = ("Step")
