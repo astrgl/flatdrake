@@ -546,13 +546,13 @@ Private Sub UpdateConsole()
     txtConsole.Pos = txtConsole.Length
     
 'PULIZIA CARATTERI ERRATI IN CONSOLE******************      
-    ' sStr = Replace(sStr, "", "")
-    ' sStr = Replace(sStr, "[1m", "")
-    ' sStr = Replace(sStr, "[22m", "")
-    ' sStr = Replace(sStr, "[6n", "")
-    ' sStr = Replace(sStr, "[2m", "")
-    ' sStr = Replace(sStr, "[?25l", "")
-    ' sStr = Replace(sStr, "[?25h", "")
+    sStr = Replace(sStr, "", "")
+    sStr = Replace(sStr, "[1m", "")
+    sStr = Replace(sStr, "[22m", "")
+    sStr = Replace(sStr, "[6n", "")
+    sStr = Replace(sStr, "[2m", "")
+    sStr = Replace(sStr, "[?25l", "")
+    sStr = Replace(sStr, "[?25h", "")
 '*****************************************************
     txtConsole.Insert(sStr)
 
