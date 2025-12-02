@@ -421,7 +421,10 @@ Public Sub Process_Read()
                   $TOT = 1
                Endif
                 If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
-                   $TOT = Left($TOT, 1)                     
+                   $TOT = Left($TOT, 1) 
+                   If Asc($TOT) < 47 Or If Asc($TOT) > 58 Then
+                      $TOT = 1
+                   Endif
                 Endif
              FRUN.Show    
              Endif 
@@ -434,6 +437,8 @@ Public Sub Process_Read()
                 Endif
                  If Right($PROGRESS, 1) = "/" Then
                     $PROGRESS = Left($PROGRESS, 1)
+                 Else 
+                    $PROGRESS = 1   
                  Endif
              FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of  " & $TOT
            Endif
@@ -444,6 +449,9 @@ Public Sub Process_Read()
              Try $TOT = Right(Left(sStr, 14), 2)
              If Error Then 
                  $TOT = 1
+                 If Asc($TOT) < 47 Or If Asc($TOT) > 58 Then
+                      $TOT = 1
+                 Endif
                Endif
              If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
                    $TOT = Left($TOT, 1)                     
@@ -457,6 +465,8 @@ Public Sub Process_Read()
                 Endif
               If Right($PROGRESS, 1) = "/" Then
                     $PROGRESS = Left($PROGRESS, 1)
+              Else 
+                    $PROGRESS = 1        
               Endif
              FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of " & $TOT
   Endif
@@ -472,53 +482,6 @@ Public Sub Process_Read()
 If InStr($sText, "Which do you want to use") > 0 Then
     FSELEZIONE.Show
   Endif 
- 
-  'If $PRINTLOG = 0 Then  
-    '   If InStr($sText, $PASSWORD) > 0 Then                           'RICHIESTA INSERIMENTO PASSWORD
-    '     FPW.Show
-    '   Endif
-    '   If InStr($sText, $RQSTPASSWORD) > 0 Then                      'operazione annullata se è richiesta password
-    '    FPW.Close
-    '    Print #$hProcess, Chr$(3);
-    '   Endif 
-    '   If InStr($sText, $PROCEDERE) > 0 Then                        'PROCEDERE AD INSTALLARE
-    '       If $SECUREMODE = "SECURE" Then
-    '         FSINOSECURE.Show
-    '       Else 
-    '         FSINO.Show    
-    '       Endif
-    '   Endif
-    ' '****************************************************************************************
-    '   If InStr($sText, "Your choice:") > 0 Then                   'DOMANDA DI SELEZIONE 
-    '     FSELECTION.Show
-    '    Endif
-    ' '****************************************************************************************
-    '   If InStr($sText, $FATTO) > 0 Then                         ' OPERAZIONE TERMINATA (FATTO)"
-    '     If $MEMOCOMMAND = "RECOVERSUSPEND" Then
-    '       $CLEARLOGSUSPEND = 0
-    '     Endif
-    '     FOK.Show
-    '   Endif
-    '   If InStr($sText, $NONRIUSCITO) > 0 Then                   ' OPERAZIONE TERMINATA (NON RIUSCITO)"
-    '     FOK.Show
-    '   Endif
-' '*********************************************************************************************
-'       If InStr($sText, "sudo: 3") > 0 Then                   ' TEST PER PASSWORD ERRATA"
-'         Message.Info("Operazione non eseguita password errata", "Ok")
-'       Endif
-' '*********************************************************************************************
-
-' 'COMANDI POSTUMI (MEMOCOMMAND)*************************************************
-'   'OM-PICKER********************************************       
-'        If $MEMOCOMMAND = "dnf repolist" Then
-'           Print #$hProcess, $MEMOCOMMAND & gb.NewLine; 
-'           $MEMOCOMMAND = ""
-'           Me.Mouse = Mouse.default
-'           Fmain.Enabled = True
-'           Wait 2
-'           Fmain.TimerUPLISTE.Enabled = True
-'        Endif
-
 ' '**************************************************************************
   UpdateConsole
 '***********************************************************************
