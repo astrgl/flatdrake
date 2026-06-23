@@ -21,6 +21,7 @@ Public $RISOLUZIONEY As Integer
 Public $RISOLUZIONEYMAX As Integer
 Public $FULLSCREEN As Integer
 Public $DISTRO As String
+Public $LANG As String
 Public $KILL As Integer
 Public $COLORTEXT As String
 Public $BTNRESOLUTION_TOOLTIP_MAXIM As String
@@ -74,9 +75,11 @@ Public Sub Form_Open()
     $hProcess = Exec ["sh", "--noediting"] For Input Output As "Process"
     
  'VERIFICA CHE FLATDRAKE NON SIA GIA IN ESECUZIONE
+    Dim $COMMAND As String
     Dim $LOCK As String
     Dim $LOCKVAL As Integer
-     Shell "ps aux | grep gbr3 | grep -w flatdrake.gambas | wc -l" Wait To $LOCK 
+    $COMMAND = "ps aux | grep gbr3 | grep -w flatdrake.gambas | wc -l"
+     Shell $COMMAND Wait To $LOCK 
      $LOCKVAL = CInteger(Val(Right(Left($LOCK))))
      If $LOCKVAL > 2 Then
         Message.Info("Please don't run multiple session of FlatDrake!", "OK")
@@ -165,34 +168,51 @@ Public Sub Form_Open()
   ' Endif
  'CARICA L'IMMAGINE DELLA DISTRO*****************************
    Shell "lsb_release -d" To $DISTRO
-    '$DISTRO = "ROSA" 'SERVE PER TEST
+   $LANG = Left(System.Language, 5)
+   
+   'SERVE PER TEST
+   '$LANG = "ru_RU"
+   '$DISTRO = "pippo"
+   '$DISTRO = "OpenMandriva" 
+   
   If InStr($DISTRO, "OpenMandriva", 0, gb.IgnoreCase) Then
-      ' PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
-      If $THEMES = "Oxygen" Or If $THEMES = "Breeze" Then
+            If $THEMES = "Oxygen" Or If $THEMES = "Breeze" Then
             PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
          Else If $THEMES = "BreezeDark"
-  '          PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA-BD.png")  
             PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/OMA.png")
          Endif
      Else 
-       ' PictureBox1.Picture = Picture.Load("/home/mauro/flatdrake/OMA.png")
-      If InStr($DISTRO, "ROSA", 0, gb.IgnoreCase) Then
-         ' PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")
-         If $THEMES = "Oxygen" Or If $THEMES = "Breeze" Then
-            PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA.png")   
-         Else If $THEMES = "BreezeDark"
-            PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/ROSA-BD.png")   
-         Endif
-         Spinner1.X = 633
-         Spinner1.Y = 415
-         Spinner1.Height = 45
-         Spinner1.Width = 98
+         If InStr($DISTRO, "ROSA", 0, gb.IgnoreCase) Then
+          If $LANG = "ru_RU" Then
+            If $THEMES = "Oxygen" Or If $THEMES = "Breeze" Then
+                PictureBox1.Picture = Picture.Load("/usr/share/dnfdrake/POCA.png")   
+            Else If $THEMES = "BreezeDark"
+                PictureBox1.Picture = Picture.Load("/usr/share/dnfdrake/POCA-BD.png")   
+            Endif
+           Spinner1.X = 479
+           Spinner1.Y = 364
+           Spinner1.Height = 45
+           Spinner1.Width = 98
+          Else  
+            If $THEMES = "Oxygen" Or If $THEMES = "Breeze" Then
+                 PictureBox1.Picture = Picture.Load("/usr/share/dnfdrake/ROSA.png")   
+            Else If $THEMES = "BreezeDark"
+                  PictureBox1.Picture = Picture.Load("/usr/share/dnfdrake/ROSA-BD.png")   
+            Endif
+            Spinner1.X = 490
+            Spinner1.Y = 364
+            Spinner1.Height = 45
+            Spinner1.Width = 98 
+          Endif
     Else 
          PictureBox1.Picture = Picture.Load("/usr/share/flatdrake/LINUX.png")
-         Spinner1.X = 633
-         Spinner1.Y = 424
-         Spinner1.Height = 45
-         Spinner1.Width = 98
+         ' Spinner1.X = 633
+         ' Spinner1.Y = 554
+         ' Spinner1.Height = 45
+         ' Spinner1.Width = 98
+         'METTENDO A 0 LO SPINNER NON VIENE VISUALIZZATO
+         Spinner1.Height = 0
+         Spinner1.Width = 0
     Endif
   Endif
   
@@ -442,34 +462,38 @@ Public Sub Process_Read()
                  Endif
              FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of  " & $TOT
            Endif
-           
-  If InStr($sText, "Updating") > 0 Then 
-     If FRUN.Visible = False
-             ' Try $TOT = Right(Left(sStr, 13), 1) ' STRINGA OK SINO A 9 STEP
-             Try $TOT = Right(Left(sStr, 14), 2)
-             If Error Then 
-                 $TOT = 1
-                 If Asc($TOT) < 47 Or If Asc($TOT) > 58 Then
-                      $TOT = 1
-                 Endif
-               Endif
-             If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
-                   $TOT = Left($TOT, 1)                     
-             Endif
-             FRUN.Show    
-             Endif 
-             ' Try $PROGRESS = Right(Left(sStr, 11), 1) ' STRINGA OK SINO A 9 STEP
-             Try $PROGRESS = Right(Left(sStr, 12), 2)
-                If Error Then 
-                  $PROGRESS = 1
-                Endif
-              If Right($PROGRESS, 1) = "/" Then
-                    $PROGRESS = Left($PROGRESS, 1)
-              Else 
-                    $PROGRESS = 1        
+  If InStr($sText, "Updating…") > 0 Then   
+    FRUN.Show    
+    FRUN.TXTSTEP.Text = "Updating..."
+  Else          
+    If InStr($sText, "Updating") > 0 Then 
+       If FRUN.Visible = False
+          ' Try $TOT = Right(Left(sStr, 13), 1) ' STRINGA OK SINO A 9 STEP
+          Try $TOT = Right(Left(sStr, 14), 2)
+          If Error Then 
+              $TOT = 1
+              If Asc($TOT) < 47 Or If Asc($TOT) > 58 Then
+                    $TOT = 1
               Endif
-             FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of " & $TOT
-  Endif
+          Endif
+          If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
+                $TOT = Left($TOT, 1)                     
+          Endif
+          FRUN.Show    
+       Endif 
+       ' Try $PROGRESS = Right(Left(sStr, 11), 1) ' STRINGA OK SINO A 9 STEP
+       Try $PROGRESS = Right(Left(sStr, 12), 2)
+       If Error Then 
+          $PROGRESS = 1
+       Endif
+       If Right($PROGRESS, 1) = "/" Then
+          $PROGRESS = Left($PROGRESS, 1)
+       Else 
+          $PROGRESS = 1        
+       Endif
+       FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of " & $TOT
+    Endif
+  Endif   
            
 'PROGRESSBAR2 PARZIALE***************************************** 
   If InStr($sText, "%") > 0 And If FRUN.Visible = True Then  
