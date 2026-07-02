@@ -17,6 +17,7 @@
     Visible = False
     Font = Font["Nimbus Mono L"]
     Alignment = Align.Left
+    ReadOnly = True
     Wrap = True
   }
   { Timer1 #Timer

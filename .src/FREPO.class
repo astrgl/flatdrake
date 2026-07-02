@@ -5,6 +5,11 @@ Public Sub Form_Open()
   BTNCLOSE.Picture = Picture.Load(FMAIN.$PATHICONS & "esci" & FMain.$THEMESSUFFIX)
   
 End
+Public Sub Form_KeyPress()
+  If Key.Code = Key.Space And BTNCLOSE.HasFocus Then
+     BTNCLOSE_Click
+  Endif
+End
 
 
 Public Sub BTNCLOSE_Click()

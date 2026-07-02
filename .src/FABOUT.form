@@ -14,5 +14,6 @@
   { TextArea1 TextArea
     MoveScaled(6,8,52,63)
     Alignment = Align.Center
+    ReadOnly = True
   }
 }

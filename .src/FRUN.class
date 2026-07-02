@@ -18,8 +18,18 @@ TXTSTEP.Text = "Please wait..."
 'FMAIN.Enabled = False
 FMAIN.BTNCOMMAND.Enabled = True
 BTNSTOP.Picture = Picture.Load(FMAIN.$PATHICONS & "stop" & FMain.$THEMESSUFFIX)
+If FOK.Visible = True Then
+    FRUN.Close
+Endif
 'FMAIN.Spinner1.Enabled = True
 End
+Public Sub Form_KeyPress()
+  If Key.Code = Key.Space And BTNSTOP.HasFocus Then
+     BTNSTOP_Click
+  Endif
+End
+
+
 Public Sub form_Close()
   'FMAIN.Enabled = True
   FMAIN.FMAINUNLOCK

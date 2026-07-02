@@ -8,6 +8,11 @@ TextArea1.Text = File.Load("/usr/share/flatdrake/flatdrake-ABOUT")
 Fmain.FMAINLOCK
 LBLTITOLO.Text = "FlatDrake " & Application.Version
 End
+Public Sub Form_KeyPress()
+  If Key.Code = Key.Space And BTNCLOSE.Enabled = True Then
+     BTNCLOSE_Click
+  Endif
+End 
 Public Sub Form_Close()
 
   'Fmain.Enabled = True

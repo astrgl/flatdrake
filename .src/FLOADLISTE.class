@@ -24,6 +24,11 @@ Public Sub Form_Open()
      
      CHECKCONNECTION
 End
+Public Sub Form_KeyPress()
+  If Key.Code = Key.Space And BTNSKIP.Enabled = True Then
+     BTNSKIP_Click
+  Endif
+End
 Public Sub form_Close()
  ' FMAIN.Enabled = True
    FMAIN.FMAINUNLOCK

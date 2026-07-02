@@ -17,6 +17,7 @@
   }
   { TextArea1 TextArea
     MoveScaled(1,2,112,33)
+    ReadOnly = True
     Wrap = True
   }
   { BTNNO Button

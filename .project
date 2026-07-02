@@ -2,7 +2,7 @@
 Title=FlatDrake
 Startup=FMAIN
 Icon=flatdrake.svg
-Version=2.6.5
+Version=2.6.6
 Component=gb.image
 Component=gb.qt6
 Component=gb.form

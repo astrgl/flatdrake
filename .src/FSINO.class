@@ -15,6 +15,16 @@ BTNNO.Picture = Picture.Load(FMAIN.$PATHICONS & "stop" & FMain.$THEMESSUFFIX)
 '  TextArea1.Text = sStr
   Timer1.Enabled = True
 End
+Public Sub Form_KeyPress()
+  If Key.Code = Key.Space Then
+    If BTNSI.HasFocus Then
+       BTNSI_Click
+    Endif
+    If BTNNO.HasFocus Then
+       BTNNO_Click
+    Endif
+  Endif
+End
 Public Sub form_Close()
   'FMAIN.Enabled = True
   FMAIN.FMAINUNLOCK
