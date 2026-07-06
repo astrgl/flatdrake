@@ -85,14 +85,15 @@ Public Sub Form_Open()
         Message.Info("Please don't run multiple session of FlatDrake!", "OK")
         Quit 
      Endif 
+
 'IMPOSTA LA LINGUA DI CONSOLE INGLESE*****************************************************************
-        Print #$hProcess, "LANG=en_US.UTF-8" & gb.NewLine;
-        Wait 0.1
-        Print #$hProcess, "LANGUAGE=en_US.UTF-8" & gb.NewLine;
-        Wait 0.1
-        Print #$hProcess, "LC_COLLATE=C" & gb.NewLine;
-        Wait 0.1
-        Print #$hProcess, "LC_CTYPE=en_US.UTF-8" & gb.NewLine;
+        ' Print #$hProcess, "LANG=en_US.UTF-8" & gb.NewLine;
+        ' Wait 0.1
+        ' Print #$hProcess, "LANGUAGE=en_US.UTF-8" & gb.NewLine;
+        ' Wait 0.1
+        ' Print #$hProcess, "LC_COLLATE=C" & gb.NewLine;
+        ' Wait 0.1
+        ' Print #$hProcess, "LC_CTYPE=en_US.UTF-8" & gb.NewLine;
 
  
  'Carica il pront**********************************************************************************
@@ -434,34 +435,39 @@ Public Sub Process_Read()
            
 'FRUN E STEP*************************************************************
   If InStr($sText, "Installing") > 0                    'PROCEDERE AD INSTALLARE
-             If FRUN.Visible = False
-             'Try $TOT = Right(Left(sStr, 15), 1) ' STRINGA OK SINO A 9 STEP
-             Try $TOT = Right(Left(sStr, 16), 2)
-               If Error Then
-                  $TOT = 1
-               Endif
-                If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
-                   $TOT = Left($TOT, 1) 
-                   If Asc($TOT) < 47 Or If Asc($TOT) > 58 Then
-                      $TOT = 1
-                   Endif
-                Endif
-             FRUN.Show    
-             Endif 
-              'Try $PROGRESS = Right(Left(sStr, 13), 1) ' STRINGA OK SINO A 9 STEP
-               Try $PROGRESS = Right(Left(sStr, 14), 2)
-                If Error Then 
-                  ' FRUN.BTNSTOP_Click
-                  ' Message.Info("ERRORE PROG", "OK") 
-                   $PROGRESS = 1
-                Endif
-                 If Right($PROGRESS, 1) = "/" Then
-                    $PROGRESS = Left($PROGRESS, 1)
-                 Else 
-                    $PROGRESS = 1   
-                 Endif
-             FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of  " & $TOT
-           Endif
+    If FRUN.Visible = False
+        'Try $TOT = Right(Left(sStr, 15), 1) ' STRINGA OK SINO A 9 STEP
+         Try $TOT = Right(Left(sStr, 16), 2)
+          If Error Then
+             $TOT = 1
+          Endif
+          If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
+             $TOT = Left($TOT, 1) 
+              If Asc($TOT) < 47 Or If Asc($TOT) > 58 Then
+                 $TOT = 1
+              Endif
+          Endif
+      FRUN.Show    
+    Endif 
+    'Try $PROGRESS = Right(Left(sStr, 13), 1) ' STRINGA OK SINO A 9 STEP
+     Try $PROGRESS = Right(Left(sStr, 14), 2)
+        If Error Then 
+         ' FRUN.BTNSTOP_Click
+         ' Message.Info("ERRORE PROG", "OK") 
+           $PROGRESS = 1
+        Endif
+        If Right($PROGRESS, 1) = "/" Then
+           $PROGRESS = Left($PROGRESS, 1)
+        Else 
+           $PROGRESS = 1   
+        Endif
+    If Right(Left(sStr, 12), 1) = "?" Then
+      FRUN.TXTSTEP.Text = "Installing..."
+    Else 
+      FRUN.TXTSTEP.Text = "Step " & $PROGRESS & " of  " & $TOT
+    Endif  
+  Endif
+           
   If InStr($sText, "Updating…") > 0 Then   
     FRUN.Show    
     FRUN.TXTSTEP.Text = "Updating..."
@@ -849,9 +855,9 @@ Private Sub CERCAINREPO()
        'Shell "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY /home/mauro/dnfdrake.gambas" 'PER TEST
       Else
          If $USERMODE = 0 Then
-            Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
+            Print #$hProcess, "LC_ALL=C flatpak install " & $PKGINSTALL & gb.NewLine;
          Else   
-            Print #$hProcess, "flatpak --user install " & $PKGINSTALL & gb.NewLine;
+            Print #$hProcess, "LC_ALL=C flatpak --user install " & $PKGINSTALL & gb.NewLine;
          Endif
         'Stop Event
       Endif
@@ -860,9 +866,9 @@ Private Sub CERCAINREPO()
         'Message.Info("si", "ok")
      Else   
          If $USERMODE = 0 Then
-            Print #$hProcess, "flatpak install " & $PKGINSTALL & gb.NewLine;
+            Print #$hProcess, "LC_ALL=C flatpak install " & $PKGINSTALL & gb.NewLine;
          Else   
-            Print #$hProcess, "flatpak --user install " & $PKGINSTALL & gb.NewLine;
+            Print #$hProcess, "LC_ALL=C flatpak --user install " & $PKGINSTALL & gb.NewLine;
          Endif
            'Message.Info("no", "ok")
      Endif
@@ -1202,7 +1208,7 @@ Public Sub BTNPKGUPDATE_Click()
    Dim s As String
    Dim spkg As String 
    If CHKALLUPDATE.Value = True
-      Print #$hProcess, "flatpak update " & gb.NewLine;
+      Print #$hProcess, "LC_ALL=C flatpak update " & gb.NewLine;
       TABHIDE
       Btnclear_Click
       txtConsole.Visible = True
@@ -1223,7 +1229,7 @@ Public Sub BTNPKGUPDATE_Click()
           TABHIDE
           Btnclear_Click
           txtConsole.Visible = True
-          Print #$hProcess, "flatpak update " & spkg & gb.NewLine; ' & " | tee /dev/null " & User.Home & "/last.log"    
+          Print #$hProcess, "LC_ALL=C flatpak update " & spkg & gb.NewLine; ' & " | tee /dev/null " & User.Home & "/last.log"    
        Endif
     Endif
    Endif  
@@ -1486,7 +1492,7 @@ Public Sub BTNREMOVE_Click()
          TABHIDE
          Btnclear_Click
          txtConsole.Visible = True
-         Print #$hProcess, "flatpak uninstall " & spkg & gb.NewLine; ' & " | tee /dev/null " & User.Home & "/last.log"    
+         Print #$hProcess, "LC_ALL=C flatpak uninstall " & spkg & gb.NewLine; ' & " | tee /dev/null " & User.Home & "/last.log"    
        Endif
     Endif
 End

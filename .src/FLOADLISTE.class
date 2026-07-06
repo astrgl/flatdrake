@@ -55,19 +55,19 @@ If $CONNECTION = 1 Then
        ProgressBar1.Value = b / 100
      Next 
     TXTSTATO.Text = $LOADINST 
-    Shell "flatpak list |expand -t 60,135,160,175,185 >" & User.Home &/ ".config/flatdrake/installati.txt" Wait
+    Shell "LC_ALL=C flatpak list |expand -t 60,135,160,175,185 >" & User.Home &/ ".config/flatdrake/installati.txt" Wait
      For b = 30 To 50
        ProgressBar1.Value = b / 100
        Wait 0.01
      Next
      TXTSTATO.Text = $LOADNONINST
-     Shell "flatpak remote-ls |expand -t 60,135,160,175,185 >" & User.Home &/ ".config/flatdrake/noninstallati.txt" Wait
+     Shell "LC_ALL=C flatpak remote-ls |expand -t 60,135,160,175,185 >" & User.Home &/ ".config/flatdrake/noninstallati.txt" Wait
      For b = 50 To 80
        ProgressBar1.Value = b / 100
        Wait 0.01
      Next
       TXTSTATO.Text = $LOADAGG
-     Shell "flatpak update |expand -t 05,10,85,95,100,110,115 >" & User.Home &/ ".config/flatdrake/updates.txt |echo n" Wait
+     Shell "LC_ALL=C flatpak update |expand -t 05,10,85,95,100,110,115 >" & User.Home &/ ".config/flatdrake/updates.txt |echo n" Wait
      For b = 80 To 100
      ProgressBar1.Value = b / 100
      Wait 0.01
