@@ -31,6 +31,7 @@ Public Sub Form_KeyPress()
 End
 Public Sub form_Close()
  ' FMAIN.Enabled = True
+   FMAIN.$FRUNLOCK = 1
    FMAIN.FMAINUNLOCK
    FMAIN.DRAKETRAYUPDATE
 End

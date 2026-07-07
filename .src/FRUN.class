@@ -21,6 +21,9 @@ BTNSTOP.Picture = Picture.Load(FMAIN.$PATHICONS & "stop" & FMain.$THEMESSUFFIX)
 If FOK.Visible = True Then
     FRUN.Close
 Endif
+If FMAIN.$FRUNLOCK = 1 Then
+    FRUN.Close
+Endif
 'FMAIN.Spinner1.Enabled = True
 End
 Public Sub Form_KeyPress()

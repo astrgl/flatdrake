@@ -31,6 +31,7 @@ Public $THEMESSUFFIX As String      'CODA DEL NOME DELL'ICONA
 Public $PATHICONS As String         'PATH DELLE ICONE
 Public $TEMAASK As String           'TRADUZIONE DOMANDA TEMA
 Public $USERMODE As String          'SERVE A INSTALLARE LE APP NELLA PARTIZIONE UTENTE
+Public $FRUNLOCK As Integer         'SERVE A IMPEDIRE APERTURE INDESIDERATE DI FRUN
 
 Public Sub Form_Open()
 'TOOLTIP E TESTI*******************************************************************************
@@ -261,10 +262,10 @@ Public Sub Form_Open()
     TIMERUPLISTE.Enabled = True
     $CLOSEPASS = 0
     $FULLSCREEN = 1
+    $FRUNLOCK = 0
     LOADICONS
     RESOLUTION
   '******************************************************************************
-  
   
 End
 
@@ -516,6 +517,9 @@ If InStr($sText, "Which do you want to use") > 0 Then
   UpdateConsole
 '***********************************************************************
 If InStr(TXTCONSOLE.Text, "[Flatdrake Lavora Per Te]") Or If InStr(BTNCOMMAND.Text, " ^") Then
+  If FRUN.Visible = True Then
+     FRUN.Close
+  Endif
   Spinner1.Visible = False
   Spinner1.Stop
   Else 
@@ -653,6 +657,7 @@ Public Sub FMAINUNLOCK()
   BTNCLEAR.Enabled = True
   CHKALLUPDATE.Enabled = True
   BTNCONFIG.Enabled = True
+  After 1 Do $FRUNLOCK = 0
   
 End
 
