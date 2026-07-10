@@ -448,7 +448,10 @@ Public Sub Process_Read()
                  $TOT = 1
               Endif
           Endif
-      FRUN.Show    
+      If $FRUNLOCK = 0 Then
+         FRUN.Show  
+      Endif
+        
     Endif 
     'Try $PROGRESS = Right(Left(sStr, 13), 1) ' STRINGA OK SINO A 9 STEP
      Try $PROGRESS = Right(Left(sStr, 14), 2)
@@ -470,7 +473,9 @@ Public Sub Process_Read()
   Endif
            
   If InStr($sText, "Updating…") > 0 Then   
-    FRUN.Show    
+    If $FRUNLOCK = 0 Then
+         FRUN.Show  
+    Endif    
     FRUN.TXTSTEP.Text = "Updating..."
   Else          
     If InStr($sText, "Updating") > 0 Then 
@@ -486,7 +491,9 @@ Public Sub Process_Read()
           If Asc(Right($TOT, 1)) < 47 Or If Asc(Right($TOT, 1)) > 58 Then
                 $TOT = Left($TOT, 1)                     
           Endif
-          FRUN.Show    
+          If $FRUNLOCK = 0 Then
+             FRUN.Show  
+          Endif 
        Endif 
        ' Try $PROGRESS = Right(Left(sStr, 11), 1) ' STRINGA OK SINO A 9 STEP
        Try $PROGRESS = Right(Left(sStr, 12), 2)
@@ -550,6 +557,8 @@ Private Sub UpdateConsole()
     sStr = Replace(sStr, "[2m", "")
     sStr = Replace(sStr, "[?25l", "")
     sStr = Replace(sStr, "[?25h", "")
+    sStr = Replace(sStr, "[A", "")
+    sStr = Replace(sStr, "[K", "")
 '*****************************************************
     txtConsole.Insert(sStr)
 
@@ -1533,9 +1542,45 @@ Public Sub BTNRESOLUTION_Click()
 RESOLUTION
 End
 
-Public Sub BTNREPAIR_Click()
-End
 
+'**************************************************NUOVA FUNZIONE***************************************************************
+Public Sub BTNREPAIR_Click()
+  TABHIDE
+  
+  If TXTCONSOLE.Visible = False Then
+    Btnclear_Click 
+  Endif
+  TXTCOMMAND.SetFocus
+  If txtCommand.Visible = False Then
+    Btncommand.Text = Btncommand.Text & " ^"
+    HBox1.Visible = True
+    'HBox1.Tooltip = $HBOX1TOOLTIP
+    txtCommand.Visible = True
+    PictureBox1.Visible = False
+    btnCtrlC.Visible = True
+    btnCtrlZ.Visible = True
+    TXTCONSOLE.Visible = True
+    If Spinner1.Visible = True Then
+      Spinner1.Visible = False
+    Endif
+      ' If Btnexp2.Text = "EXP2" Then
+      '   Btnexp2_Click 
+      ' Endif
+  Else
+      Btncommand.Text = Left(Btncommand.Text, -2)
+      HBox1.Visible = False
+      HBox1.Tooltip = ""
+      txtCommand.Visible = False
+      PictureBox1.Visible = True
+      btnCtrlC.Visible = False
+      btnCtrlZ.Visible = False
+      TXTCONSOLE.Visible = False
+     ' Btnexp2_Click 
+      
+  Endif
+
+End
+'**************************************************NUOVA FUNZIONE****************************************************************
 Public Sub BTNINFOBROWSER_Click()
     Dim a As String
     Dim s As String
